@@ -34,12 +34,3 @@ enum Role {
   USER
   ADMIN
 }
-
-Role USER{
-
-
-}
-
-Role ADMIN{
-
-}
