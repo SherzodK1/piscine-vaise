@@ -9,29 +9,37 @@ generator client {
 }
 
 model Utilisateur {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  nom      String?
-  prenom      String?
-  dateNaissance YEAR
-  role      Role     @default(USER)
-  dateAbonnement DateTime @default(now())
-
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  nom             String?
+  prenom          String?
+  dateNaissance   DateTime
+  role            Role     @default(USER)
+  dateAbonnement  DateTime @default(now())
+  cours           Cours[]  @relation("CoursProfesseur")
 }
 
-
 model Cours {
-  id        Int      @id @default(autoincrement())
-  dateCreation DateTime @default(now())
-  datePublication DateTime @updatedAt
-  dateCours Boolean  @default(false)
-  heureCours
-  nomCours     String   @db.VarChar(255)
-  professeurs    User?    @relation(fields: [authorId], references: [id])
-  profID  Int?
+  id               Int      @id @default(autoincrement())
+  dateCreation     DateTime @default(now())
+  datePublication  DateTime @updatedAt
+  dateCours        DateTime
+  heureCours       DateTime
+  nomCours         String   @db.VarChar(255)
+  professeur       Utilisateur? @relation("CoursProfesseur", fields: [profID], references: [id])
+  profID           Int?
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+Role USER{
+
+
+}
+
+Role ADMIN{
+
 }
