@@ -1,26 +1,14 @@
 <template>
   <div>
-    <header>
-      <nav>
-        <ul>
-          <li>Forfait</li>
-          <li>Equipements</li>
-          <li>Cours</li>
-          <li>Evénements</li>
-          <li>Réservation</li>
-        </ul>
-        <button>S'inscrire</button>
-        <button>Se connecter</button>
-      </nav>
-    </header>
+    <Header />
     <main>
-      <section class="equipe-section">
-        <h1>équipements</h1>
+      <section class="equipement-section">
+        <h1>Équipements</h1>
         <div v-for="equipe in equipe" :key="equipe.id" class="equipement-card">
           <h2>{{ equipe.title }}</h2>
           <p>Description : {{ equipe.description }}</p>
-          <p>Quantité totale : {{ equipe.quantTotal }} </p>
-          <p>Quantité actuelle : {{ equipe.quantActuelle }} </p>
+          <p>Quantité totale : {{ equipe.quantTotal }}</p>
+          <p>Quantité actuelle : {{ equipe.quantActuelle }}</p>
           <button>Informations location</button>
         </div>
       </section>
@@ -41,38 +29,22 @@
 </template>
 
 <script>
+import Header from '/workspaces/piscine-vaise/header.vue';
+
 export default {
   name: "EquipementsPage",
+  components: {
+    Header
+  },
   data() {
     return {
       equipe: [
-        {
-          id: 1,
-          title: "Planche 1m",
-          description:
-            "Planche en mousse de 1m de long et 0,5m de large",
-          quantTotal: 30,
-          quantActuelle: 8,
-        },
-        {
-          id: 2,
-          title: "Lunettes de bain",
-          description:
-            "Lunettes de bain pour enfants de 8 a 10 ans",
-          quantTotal: 54,
-          quantActuelle: 54,
-        },
-        {
-          id: 3,
-          title: "Boué de nage",
-          description:
-            "Boué de nage pour enfants ainsi que les personnes qui apprennent la nage",
-          quantTotal: 54,
-          quantActuelle: 54,
-        },
-      ],
+        { id: 1, title: "Planche 1m", description: "Planche en mousse de 1m de long et 0,5m de large", quantTotal: 30, quantActuelle: 8 },
+        { id: 2, title: "Lunettes de bain", description: "Lunettes de bain pour enfants de 8 à 10 ans", quantTotal: 54, quantActuelle: 54 },
+        { id: 3, title: "Bouée de nage", description: "Bouée de nage pour enfants ainsi que les personnes qui apprennent la nage", quantTotal: 54, quantActuelle: 54 }
+      ]
     };
-  },
+  }
 };
 </script>
 
@@ -109,7 +81,7 @@ button {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 8px;
-  color : #efffff
+  color: #efffff;
 }
 
 .footer-content {
