@@ -4,7 +4,7 @@
       <h1>{{ title }}</h1>
       <nav>
         <ul>
-          <li><router-link to="/">Accueil</router-link></li>
+          <li><router-link to="/accueil">Accueil</router-link></li>
           <li><router-link to="/aPropos">À propos</router-link></li>
           <li><router-link to="/cours">Cours</router-link></li>
           <li><router-link to="/equipements">equipements</router-link></li>
