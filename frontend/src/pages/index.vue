@@ -10,7 +10,11 @@
           <li><router-link to="/equipements">equipements</router-link></li>
           <li><router-link to="/evenements">evenements</router-link></li>
           <li><router-link to="/pageProfil">pageProfil</router-link></li>
-          <li><router-link to="/reservationSalle">reservationSalle</router-link></li>
+          <li>
+            <router-link to="/reservationSalle">reservationSalle</router-link>
+          </li>
+          <li><router-link to="/forfait">Forfait</router-link></li>
+          <li><router-link to="/admin">admin</router-link></li>
         </ul>
       </nav>
     </header>
@@ -20,10 +24,10 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
-      title: 'Mon Application Vue.js'
+      title: "Mon Application Vue.js",
     };
   },
 };
