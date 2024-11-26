@@ -12,6 +12,7 @@ model Utilisateur {
   nom       String
   email     String   @unique
   motDePasse String
+  reservations Reservation[]
 }
 
 model Reservation {

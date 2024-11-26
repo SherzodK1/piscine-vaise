@@ -29,8 +29,10 @@
               <p>Lieu : {{ cours.lieu }}</p>
             </v-card-text>
             <v-card-actions class="d-flex justify-center">
-              <v-btn color="primary">Plus d'informations</v-btn>
-            </v-card-actions>
+  <v-btn color="primary" href="coursreglement">Plus d'informations</v-btn>
+</v-card-actions>
+
+
           </v-card>
         </v-col>
       </v-row>
