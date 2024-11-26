@@ -39,7 +39,8 @@
   </template>
   
   <script>
-  import Header from '@/components/Header.vue';
+  import Header from '/workspaces/piscine-vaise/header.vue';
+
   
   export default {
     name: 'ReservationsHistory',
