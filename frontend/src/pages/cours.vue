@@ -1,4 +1,5 @@
 <template class="bg-white">
+ <AppHeader/>
 <v-container fluid class="my-8 bg-blue-darken-4 py-12">
       <h2 class="text-center white--text mb-8 text-h4">
         Nos cours adaptés à tous les goûts
@@ -37,20 +38,7 @@
     </v-container>
 
     <!-- Section Footer -->
-    <v-footer class="pa-6 bg-grey-darken-4 white--text">
-      <div class="d-flex justify-between align-center">
-        <div>
-          <p>Contactez-nous : +33 4 72 45 78 90</p>
-          <p>Adresse : 36 avenue Sidoine Apollinaire, 69009 Lyon France</p>
-        </div>
-        <div class="d-flex">
-          <a href="#" class="white--text mx-2">Facebook</a>
-          <a href="#" class="white--text mx-2">Twitter</a>
-          <a href="#" class="white--text mx-2">Instagram</a>
-          <a href="#" class="white--text mx-2">LinkedIn</a>
-        </div>
-      </div>
-    </v-footer>
+    <AppFooter/>
 </template>
 
 <script>
