@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import Header from "/workspaces/piscine-vaise/header.vue";
+import Header from "header.vue";
 
 export default {
   name: "EquipementsPage",
