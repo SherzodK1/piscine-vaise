@@ -1,6 +1,7 @@
 <template>
   <div>
-   <AppHeader/>
+    <!-- Importation correcte du composant AppHeader -->
+    <AppHeader />
     <v-main>
       <!-- Section Hero -->
       <v-img
@@ -55,18 +56,21 @@
       </v-container>
     </v-main>
 
-    <!-- Section Footer -->
-       <AppFooter/>
+    <!-- Importation correcte du composant AppFooter -->
+    <AppFooter />
   </div>
 </template>
 
 <script>
-import Header from "header.vue";
+// Importation des composants nécessaires
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 export default {
   name: "EquipementsPage",
   components: {
-    Header,
+    AppHeader,
+    AppFooter,
   },
   data() {
     return {
@@ -100,4 +104,5 @@ export default {
 </script>
 
 <style scoped>
+/* Ajoutez vos styles ici si nécessaire */
 </style>
