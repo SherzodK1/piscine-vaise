@@ -1,6 +1,6 @@
 <<template>
   <div>
-    <Header />
+     <AppHeader/>
     <v-main>
       <!-- Section Hero -->
            <h1 class="text-h3 white--text">Nos Équipements</h1>
@@ -22,8 +22,7 @@
             cols="12"
             sm="6"
             md="4"
-            class="d-flex justify-center mb-6"
-          >
+            class="d-flex justify-center mb-6">
             <v-card class="text-center rounded-lg" outlined>
               <v-img
                 :src="`https://picsum.photos/400/400?random=${equipe.id}`"
@@ -46,25 +45,18 @@
     </v-main>
 
     <!-- Section Footer -->
-    <v-footer class="pa-6 bg-grey-darken-4 white--text">
-      <div class="d-flex justify-between align-center">
-        <div>
-          <p>Contactez-nous : +33 4 72 45 78 90</p>
-          <p>Adresse : 36 avenue Sidoine Apollinaire, 69009 Lyon France</p>
-        </div>
-        <div class="d-flex">
-          <a href="#" class="white--text mx-2">Facebook</a>
-          <a href="#" class="white--text mx-2">Twitter</a>
-          <a href="#" class="white--text mx-2">Instagram</a>
-          <a href="#" class="white--text mx-2">LinkedIn</a>
-        </div>
-      </div>
-    </v-footer>
+    <AppFooter/>
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
 import Header from "header.vue";
+=======
+
+import Header from "/workspaces/piscine-vaise/header.vue";
+>>>>>>> main
+
 
 export default {
   name: "EquipementsPage",

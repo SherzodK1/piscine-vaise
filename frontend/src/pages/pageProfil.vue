@@ -1,4 +1,5 @@
 <template>
+ <AppHeader/>
     <!-- Main Content -->
     <v-main>
       <!-- Section de bienvenue -->
@@ -80,21 +81,7 @@
     </v-main>
 
     <!-- Footer -->
-    <v-footer class="pa-6 bg-grey-darken-4 white--text">
-      <div class="d-flex justify-between align-center">
-        <div>
-          <p>Copyright 2024 Spider Web Tech</p>
-          <p>Contactez-nous : +33 4 72 45 78 90</p>
-          <p>Adresse : 36 avenue Sidoine Apollinaire, 69009 Lyon France</p>
-        </div>
-        <div class="d-flex">
-          <a href="https://www.facebook.com/villedelyon" class="white--text mx-2">Facebook</a>
-          <a href="https://twitter.com/villedelyon" class="white--text mx-2">Twitter</a>
-          <a href="https://www.instagram.com/villedelyon/" class="white--text mx-2">Instagram</a>
-          <a href="https://fr.linkedin.com/company/ville-de-lyon" class="white--text mx-2">LinkedIn</a>
-        </div>
-      </div>
-    </v-footer>
+     <AppFooter/>
 </template>
 
 <script>

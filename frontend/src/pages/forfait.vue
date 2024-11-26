@@ -1,4 +1,5 @@
 <template class="bg-white">
+  <AppHeader/>
   <div class="bg-white pb-16">
     <!-- Section Hero -->
     <v-img
@@ -109,5 +110,6 @@
         </v-container>
       </v-container>
     </v-container>
+    <AppFooter/>
   </div>
 </template>

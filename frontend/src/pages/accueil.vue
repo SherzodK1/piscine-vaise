@@ -1,5 +1,8 @@
+
 <template class="bg-white">
+  <AppHeader/>
   <div class="bg-white pb-16">
+  
     <!-- Section Hero -->
     <v-img
       src="https://picsum.photos/400/400?random=3"
@@ -73,9 +76,12 @@
         </v-col>
       </v-row>
     </v-container>
+    <AppFooter/>
   </div>
 </template>
 
 <script>
+
+
 export default {};
 </script>

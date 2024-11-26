@@ -1,7 +1,7 @@
 <template>
     <div class="pa-4 text-center">
-        <v-btn-group color="#00B4E7" density="comfortable" rounded="lg" divided>
-            <v-btn variant="outlined" color="#00B4E7">
+        <v-btn-group color="#24292D" density="comfortable" rounded="lg" divided>
+            <v-btn variant="flat" >
                 <div class="text-none font-weight-regular">
                     S'INSCRIRE
                 </div>
@@ -27,13 +27,13 @@
                                     Créez votre compte
                                 </div>
 
-                                <v-form v-model="form" @submit.prevent="onSubmit">
+                                <v-form v-model="formValid" @submit.prevent="registerUtilisateur">
                                     <v-text-field v-model="password" :readonly="loading" :rules="[required]"
                                         class="text-white" bg-color="white" label="Nom et prenom"
                                         placeholder="Entrez votre nom et prenom" clearable></v-text-field>
-                                    <v-text-field v-model="email" :readonly="loading" :rules="[required]"
+                                    <v-text-field v-model="email" :readonly="loading" :rules="[required, emailRule]"
                                         class="text-black" bg-color="white" label="Email" clearable></v-text-field>
-                                    <v-text-field v-model="password" :readonly="loading" :rules="[required]"
+                                    <v-text-field v-model="password" :readonly="loading" :rules="[required, passwordRule]"
                                         class="text-white" bg-color="white" label="Mot de passe"
                                         placeholder="Entrez votre mot de passe" clearable></v-text-field>
                                     <v-btn size="large" class="text-h6 font-weight-bold mb-6" text="S'inscrire"
@@ -84,27 +84,66 @@
 </template>
 
 <script>
-
-
 export default {
     data: () => ({
-        form: false,
-        email: null,
-        password: null,
+        formValid: false,
+        nom: '',
+        email: '',
+        password: '',
         loading: false,
     }),
-
     methods: {
-        onSubmit() {
-            if (!this.form) return
-
-            this.loading = true
-
-            setTimeout(() => (this.loading = false), 2000)
+        required(value) {
+            return !!value || 'Ce champ est requis';
         },
-        required(v) {
-            return !!v || 'Field is required'
+        emailRule(value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(value) || "L'email n'est pas valide";
+        },
+        passwordRule(value) {
+            return value.length >= 6 || 'Le mot de passe doit contenir au moins 6 caractères';
+        },
+        async registerUtilisateir() {
+            // Désactiver le formulaire et afficher le chargement
+            this.loading = true;
+
+            try {
+                // Envoyer les données au backend
+                const response = await fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nom: this.nom,
+                        email: this.email,
+                        password: this.password,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Succès
+                    alert('Inscription réussie ! Bienvenue, ' + this.nom);
+                    this.resetForm();
+                } else {
+                    // Afficher les erreurs
+                    alert(result.error || 'Une erreur est survenue');
+                }
+            } catch (error) {
+                alert("Erreur lors de l'inscription : " + error.message);
+            } finally {
+                // Réactiver le formulaire
+                this.loading = false;
+            }
+        },
+        resetForm() {
+            this.nom = '';
+            this.email = '';
+            this.password = '';
+            this.formValid = false;
         },
     },
-}
+};
 </script>

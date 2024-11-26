@@ -1,7 +1,7 @@
 <template>
     <div class="pa-4 text-center">
         <v-btn-group color="#00B4E7" density="comfortable" rounded="lg" divided>
-            <v-btn  variant="flat">
+            <v-btn variant="flat">
                 <div class="text-none font-weight-regular">
                     SE CONNECTER
                 </div>
