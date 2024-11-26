@@ -1,25 +1,9 @@
 <template>
   <div>
-    <header>
-      <nav>
-        <ul>
-          <li>Forfait</li>
-          <li>Equipements</li>
-          <li>Cours</li>
-          <li>Evénements</li>
-          <li>Réservation</li>
-        </ul>
-        <button>S'inscrire</button>
-        <button>Se connecter</button>
-      </nav>
-    </header>
     <main>
-      <section class="Header-section">
-        <img src="reservationSalle.png" alt="Reservation de salle" />
-      </section>
       <section class="texte-section">
         <h2>
-          Vous souhaitrez réserver une salle, n'hésitez pas a remplir ce
+          Vous souhaitez réserver une salle, n'hésitez pas a remplir ce
           formulaire
         </h2>
       </section>

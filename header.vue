@@ -9,6 +9,7 @@
           <li><router-link to="/cours">Cours</router-link></li>
           <li><router-link to="/evenements">Evénements</router-link></li>
           <li><router-link to="/reservation">Réservation</router-link></li>
+          <li><router-link to="/reservationSalle">Réservation Salle</router-link></li>
         </ul>
         <button>S'inscrire</button>
         <button>Se connecter</button>
