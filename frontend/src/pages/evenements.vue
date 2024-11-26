@@ -1,18 +1,6 @@
 <template>
   <div>
-    <header>
-      <nav>
-        <ul>
-          <li>Forfait</li>
-          <li>Equipements</li>
-          <li>Cours</li>
-          <li>Evénements</li>
-          <li>Réservation</li>
-        </ul>
-        <button>S'inscrire</button>
-        <button>Se connecter</button>
-      </nav>
-    </header>
+    <AppHeader/>
     <main>
       <section class="evenement-section">
         <h1>EVENEMENTS</h1>
@@ -28,18 +16,7 @@
         </div>
       </section>
     </main>
-    <footer>
-      <div class="footer-content">
-        <p>Contactez-nous : +33 4 72 45 78 90</p>
-        <p>Adresse : 36 avenue Sidoine Apollinaire, 69009 Lyon France</p>
-        <div class="social-media">
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </div>
-    </footer>
+    <AppFooter/>
   </div>
 </template>
 

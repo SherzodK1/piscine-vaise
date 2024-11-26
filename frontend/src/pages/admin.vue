@@ -1,5 +1,6 @@
 <template>
   <div class="bg-white">
+    <AppHeader/>
     <v-container
       fluid
       class="d-flex justify-center text-center flex-column my-4 bg-white py-12 mb-16 text-h5"
@@ -101,6 +102,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <AppFooter/>
   </div>
 </template>
 <script setup>
