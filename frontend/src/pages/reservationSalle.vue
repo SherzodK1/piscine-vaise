@@ -1,13 +1,10 @@
 <template>
   <div>
-    <AppHeader/>
+  <AppHeader/>
     <main>
-      <section class="Header-section">
-        <img src="reservationSalle.png" alt="Reservation de salle" />
-      </section>
       <section class="texte-section">
         <h2>
-          Vous souhaitrez réserver une salle, n'hésitez pas a remplir ce
+          Vous souhaitez réserver une salle, n'hésitez pas a remplir ce
           formulaire
         </h2>
       </section>

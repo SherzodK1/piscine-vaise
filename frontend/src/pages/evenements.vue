@@ -1,62 +1,97 @@
 <template>
   <div>
-    <AppHeader/>
-    <main>
-      <section class="evenement-section">
-        <h1>EVENEMENTS</h1>
-        <div v-for="event in events" :key="event.id" class="evenement-card">
-          <h2>{{ event.title }}</h2>
-          <p>Description : {{ event.description }}</p>
-          <p>Capacité : {{ event.capacity }} personnes</p>
-          <p>Places restantes : {{ event.remainingSeats }} personnes</p>
-          <p>Horaire : {{ event.time }}</p>
-          <p>Date : {{ event.date }}</p>
-          <p>Lieu : {{ event.location }}</p>
-          <button>Réserver</button>
-        </div>
-      </section>
-    </main>
-    <AppFooter/>
+   <AppHeader/>
+    <v-main>
+      <!-- Section Hero -->
+      <v-img
+        src="https://picsum.photos/400/400?random=5"
+        max-height="600px"
+        cover
+        class="d-flex justify-start align-center mb-14"
+      >
+        <v-container
+          class="bg-grey-darken-4 text-center d-flex flex-column align-center justify-start rounded-pill opacity-80 py-6 px-8"
+        >
+          <h1 class="text-h3 white--text">Nos Équipements</h1>
+          <p class="white--text ma-2">
+            Explorez notre large gamme d'équipements pour vos activités sportives.
+          </p>
+          <v-btn color="primary" dark large>Découvrir plus</v-btn>
+        </v-container>
+      </v-img>
+
+      <!-- Section Équipements -->
+      <v-container fluid class="my-8 bg-blue-darken-4 py-12">
+        <h2 class="text-center white--text mb-8 text-h4">
+          Équipements disponibles
+        </h2>
+        <v-row>
+          <v-col
+            v-for="equipe in equipe"
+            :key="equipe.id"
+            cols="12"
+            sm="6"
+            md="4"
+            class="d-flex justify-center mb-6"
+          >
+            <v-card class="text-center rounded-lg" outlined>
+              <v-img
+                :src="`https://picsum.photos/400/400?random=${equipe.id}`"
+                height="200"
+                cover
+              ></v-img>
+              <v-card-title class="text-h5">{{ equipe.title }}</v-card-title>
+              <v-card-text>
+                <p>Description : {{ equipe.description }}</p>
+                <p>Quantité totale : {{ equipe.quantTotal }}</p>
+                <p>Quantité actuelle : {{ equipe.quantActuelle }}</p>
+              </v-card-text>
+              <v-card-actions class="d-flex justify-center">
+                <v-btn color="primary">Informations location</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+
+    <!-- Section Footer -->
+       <AppFooter/>
   </div>
 </template>
 
 <script>
+import Header from "/workspaces/piscine-vaise/header.vue";
+
 export default {
-  name: "EventsPage",
+  name: "EquipementsPage",
+  components: {
+    Header,
+  },
   data() {
     return {
-      events: [
+      equipe: [
         {
           id: 1,
-          title: "ATLANTIS !!!",
-          description:
-            "Le nouveau centre sportif de Lyon va bientôt ouvrir ses portes !",
-          capacity: 30,
-          remainingSeats: 8,
-          time: "13h00 / 14h00",
-          date: "20/10/2024",
-          location: "Centre sportif",
+          title: "Planche 1m",
+          description: "Planche en mousse de 1m de long et 0,5m de large",
+          quantTotal: 30,
+          quantActuelle: 8,
         },
         {
           id: 2,
-          title: "Aquagym Party",
-          description:
-            "Découvrez le plein potentiel de piscine grâce à cet événement qui mêle musculation et nage",
-          capacity: 16,
-          remainingSeats: 8,
-          time: "13h30 / 16h00",
-          date: "14/10/2024",
-          location: "Piscine A",
+          title: "Lunettes de bain",
+          description: "Lunettes de bain pour enfants de 8 à 10 ans",
+          quantTotal: 54,
+          quantActuelle: 54,
         },
         {
           id: 3,
-          title: "Triathlon Indoor",
-          description: "Vivez une expérience sportive intense et ludique",
-          capacity: 30,
-          remainingSeats: 17,
-          time: "8h00 / 17h00",
-          date: "13/10/2024",
-          location: "Piscine C et salle 303",
+          title: "Bouée de nage",
+          description:
+            "Bouée de nage pour enfants ainsi que les personnes qui apprennent la nage",
+          quantTotal: 54,
+          quantActuelle: 54,
         },
       ],
     };
@@ -65,56 +100,4 @@ export default {
 </script>
 
 <style scoped>
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #000;
-  color: #fff;
-  padding: 10px;
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-}
-
-nav ul li {
-  margin-right: 20px;
-}
-
-button {
-  margin-left: 10px;
-}
-
-.evenement-section {
-  text-align: center;
-  margin: 20px 0;
-}
-
-.evenement-card {
-  background-color: #f0f0f0;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.social-media a {
-  margin-left: 10px;
-  color: #fff;
-  text-decoration: none;
-}
-
-footer {
-  background-color: #000;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-}
 </style>
