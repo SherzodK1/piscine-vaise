@@ -24,7 +24,7 @@
         </h2>
       </section>
       <form>
-        <br><label for="fname">Nom </label></li><br>
+        <br><label for="fname">Nom </label><br>
         <input type="text" id="nom" name="Nom" />
         <br><label for="lname">Description</label><br>
         <input type="text" id="description" name="Description" />
