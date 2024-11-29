@@ -14,7 +14,7 @@ model Utilisateur {
   adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
   motDePasse      String?  @db.VarChar(50)
   numeroTelephone String?  @db.VarChar(50)
-  image           String?  @db.Varchar(50)
+  image           String?  @db.VarChar(50)
   Admin           Admin?
   Client          Client?
 }
@@ -51,7 +51,7 @@ model Cours {
   places         Int?
   horaire        DateTime?    @db.DateTime(0)
   dateCours      DateTime?    @db.Date
-  image          String?      @db.Varchar(50)
+  image          String?      @db.VarChar(50)
   Id_Salle       Int          @unique(map: "Id_Salle")
   Id_Utilisateur Int?
   Salle          Salle        @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_1")
@@ -77,7 +77,7 @@ model Equipement {
   type           String?      @db.VarChar(50)
   quantit_       Int?         @map("quantité")
   duree          Decimal?     @db.Decimal(15, 2)
-  image          String?      @db.Varchar(50)
+  image          String?      @db.VarChar(50)
   Id_Utilisateur Int?
   Empreinter     Empreinter[]
   Admin          Admin?       @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Equipement_ibfk_1")
@@ -107,7 +107,7 @@ model Evenement {
   places             Int?
   duree              Decimal?        @db.Decimal(15, 2)
   dateHeureEvenement DateTime?       @db.Date
-  image              String?         @db.Varchar(50)
+  image              String?         @db.VarChar(50)
   Id_Salle           Int             @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
   Salle              Salle           @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Evenement_ibfk_1")
