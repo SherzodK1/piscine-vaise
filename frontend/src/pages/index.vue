@@ -14,6 +14,7 @@
             <router-link to="/reservationSalle">reservationSalle</router-link>
           </li>
           <li><router-link to="/forfait">Forfait</router-link></li>
+          <li><router-link to="/contact">Contact</router-link></li>
           <li><router-link to="/admin">admin</router-link></li>
         </ul>
       </nav>
