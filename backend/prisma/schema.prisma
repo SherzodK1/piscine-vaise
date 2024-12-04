@@ -23,7 +23,7 @@ model Admin {
   Id_Utilisateur Int          @id
   Utilisateur    Utilisateur  @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Admin_ibfk_1")
   Cours          Cours[]
-  Equipement     Equipement[]
+  Equipement     Equipement[] @relation("AdminEquipement")
   Espace         Espace[]
   Evenement      Evenement[]
 }
@@ -62,27 +62,25 @@ model Cours {
 }
 
 model Empreinter {
-  Id_Equipement  Int
+  id_Equipement  Int
   Id_Utilisateur Int
-  Equipement     Equipement @relation(fields: [Id_Equipement], references: [Id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
+  Equipement     Equipement @relation(fields: [id_Equipement], references: [id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
   Client         Client     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_2")
 
-  @@id([Id_Equipement, Id_Utilisateur])
+  @@id([id_Equipement, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
 model Equipement {
-  Id_Equipement  Int          @id @default(autoincrement())
-  nom            String?      @db.VarChar(50)
-  type           String?      @db.VarChar(50)
-  quantit_       Int?         @map("quantité")
-  duree          Decimal?     @db.Decimal(15, 2)
-  image          String?      @db.VarChar(50)
-  Id_Utilisateur Int?
-  Empreinter     Empreinter[]
-  Admin          Admin?       @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Equipement_ibfk_1")
-
-  @@index([Id_Utilisateur], map: "Id_Utilisateur")
+  id_Equipement Int     @id @default(autoincrement())
+  nom           String
+  type          String
+  quantite      Int
+  duree         String
+  image         String?
+  createdAt     DateTime @default(now())
+  Admin         Admin?   @relation("AdminEquipement")
+  Empreinter    Empreinter[]
 }
 
 model Espace {
