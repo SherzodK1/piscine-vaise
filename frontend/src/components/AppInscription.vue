@@ -10,8 +10,7 @@
                     <template v-slot:default="{ isActive }">
                         <v-card rounded="xl" color="#1A75BB">
                             <div class="d-flex justify-end">
-                                <v-btn icon="mdi-close" size="x-large" variant="text"
-                                    @click="isActive.value = false"></v-btn>
+                                <v-btn icon="mdi-close" size="x-large" variant="text" @click="isActive.value = false"></v-btn>
                             </div>
                             <v-card-title class="d-flex justify-space-between align-start">
                                 <v-img height="100" src="@/assets/logoAtlantis.svg" />
@@ -28,7 +27,7 @@
                                 </div>
 
                                 <v-form v-model="formValid" @submit.prevent="registerUtilisateur">
-                                    <v-text-field v-model="password" :readonly="loading" :rules="[required]"
+                                    <v-text-field v-model="nom" :readonly="loading" :rules="[required]"
                                         class="text-white" bg-color="white" label="Nom et prenom"
                                         placeholder="Entrez votre nom et prenom" clearable></v-text-field>
                                     <v-text-field v-model="email" :readonly="loading" :rules="[required, emailRule]"
@@ -84,6 +83,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data: () => ({
         formValid: false,
@@ -103,33 +104,22 @@ export default {
         passwordRule(value) {
             return value.length >= 6 || 'Le mot de passe doit contenir au moins 6 caractères';
         },
-        async registerUtilisateir() {
+        async registerUtilisateur() {
             // Désactiver le formulaire et afficher le chargement
             this.loading = true;
 
             try {
                 // Envoyer les données au backend
-                const response = await fetch('http://localhost:3000/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+                const response = await axios.post('http://localhost:3000/registrer', {
                         nom: this.nom,
                         email: this.email,
                         password: this.password,
-                    }),
-                });
+                    });
 
-                const result = await response.json();
-
-                if (response.ok) {
+                if (response.status === 200) {
                     // Succès
                     alert('Inscription réussie ! Bienvenue, ' + this.nom);
                     this.resetForm();
-                } else {
-                    // Afficher les erreurs
-                    alert(result.error || 'Une erreur est survenue');
                 }
             } catch (error) {
                 alert("Erreur lors de l'inscription : " + error.message);

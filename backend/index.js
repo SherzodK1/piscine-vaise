@@ -3,20 +3,24 @@ const { PrismaClient } = require('@prisma/client');
 const stripe = require('stripe')('pk_live_51QPKD0CzBaSjt6jGMbPqeVRntGWiPcPPc13FPCVheDtZWUmapEb3SnAsArh6rqZJ08slvv517uZzbhyd4FdoVM4n00HBlBtw0V'); // Remplacez par votre clé Stripe
 const app = express();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
+const cors = require('cors');
 
 app.use(express.json()); // Middleware pour analyser le JSON
+app.use(cors());
 
 // Clé secrète pour signer les JWT
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Inscription
-app.post('/register', async (req, res) => {
+app.post('/registrer', async (req, res) => {
     const { nom, email, password } = req.body;
   
+    const adresseMail = email;
     try {
       // Vérifier si l'utilisateur existe déjà
-      const existingUser = await prisma.utilisateur.findUnique({ where: { email } });
+      const existingUser = await prisma.utilisateur.findUnique({ where: { adresseMail } });
       if (existingUser) {
         return res.status(400).json({ error: 'Email déja utilisée' });
       }
@@ -26,11 +30,12 @@ app.post('/register', async (req, res) => {
   
       // Créer un nouvel utilisateur
       const utilisateur = await prisma.utilisateur.create({
-        data: { nom, email, password: hashedPassword },
+        data: { nom, adresseMail, motDePasse: hashedPassword },
       });
   
       res.status(201).json({ message: 'Utilisateur créé avec succès', utilisateur });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Erreur serveur' });
     }
   });
@@ -38,26 +43,27 @@ app.post('/register', async (req, res) => {
   // Connexion
   app.post('/login', async (req, res) => {
     const { email, password } = req.body;
-  
+
+    const adresseMail = email;
     try {
       // Vérifier si l'utilisateur existe
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
+      const utilisateur = await prisma.utilisateur.findUnique({ where: { adresseMail } });
       if (!utilisateur) {
         return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
       }
   
       // Vérifier le mot de passe
-      const isPasswordValid = await bcrypt.compare(password, utilisateur.password);
+      const isPasswordValid = await bcrypt.compare(password, utilisateur.motDePasse);
       if (!isPasswordValid) {
         return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
       }
   
       // Générer un token JWT
-      const token = jwt.sign({ utilisateurId: utilisateur.id }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ utilisateurId: utilisateur.Id_Utilisateur }, JWT_SECRET, { expiresIn: '1h' });
   
       res.status(200).json({ message: 'Connexion avec succes', token });
     } catch (error) {
-      res.status(500).json({ error: 'Il y a eu un error pendant la connexion' });
+      res.status(500).json({ error: 'Erreur serveur' });
     }
   });
   
@@ -78,15 +84,15 @@ app.post('/register', async (req, res) => {
   }
   
   // Route protégée (exemple)
-  app.get('/profile', authenticateToken, async (req, res) => {
+  app.get('/profil', authenticateToken, async (req, res) => {
     try {
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.user.userId } });
+      const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.utilisateur.Id_Utilisateur } });
       if (!utilisateur) {
         return res.status(404).json({ error: 'Utilisateur pas trouvé' });
       }
       res.json(utilisateur);
     } catch (error) {
-      res.status(500).json({ error: 'Error' });
+      res.status(500).json({ error: 'Error serveur' });
     }
   });
   
