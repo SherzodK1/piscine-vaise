@@ -12,7 +12,7 @@ model Utilisateur {
   nom             String?  @db.VarChar(50)
   estAdmin        Boolean?
   adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
-  motDePasse      String?  @db.VarChar(50)
+  motDePasse      String?  @db.VarChar(256)
   numeroTelephone String?  @db.VarChar(50)
   image           String?  @db.Varchar(50)
   Admin           Admin?

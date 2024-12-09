@@ -25,9 +25,10 @@
                 <!-- Informations Profil -->
                 <v-col cols="12" sm="8" class="d-flex flex-column justify-center">
                   <h3>Jean-Maurice Simeone</h3>
-                  <p>Adresse : All. Pierre de Coubertin, 69007 Lyon</p>
+                  <p>Télephone : All. Pierre de Coubertin, 69007 Lyon</p>
                   <p>Abonnement : Premium</p>
-                  <p>Depuis : 10/09/2024</p>
+                  <p>Email : mail</p>
+                  <p>Mot de passe </p>
                 </v-col>
               </v-row>
             </v-card>
@@ -85,9 +86,26 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
 export default {
   name: "ProfilePage",
+
+  data() {
+    return {
+      userProfile: null,
+    };
+  },
+  async created() {
+    try {
+      const response = await axios.get('/profil');
+      this.userProfile = response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du profil:', error);
+    }
+  },
 };
+
 </script>
 
 <style scoped></style>
