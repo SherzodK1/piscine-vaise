@@ -1,123 +1,121 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const stripe = require('stripe')('pk_live_51QPKD0CzBaSjt6jGMbPqeVRntGWiPcPPc13FPCVheDtZWUmapEb3SnAsArh6rqZJ08slvv517uZzbhyd4FdoVM4n00HBlBtw0V'); // Remplacez par votre clé Stripe
+const app = express();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const cors = require('cors'); // Ajout pour éviter les erreurs CORS
-const equipementsRoute = require('./routes/equipements');
-
-const app = express();
 const prisma = new PrismaClient();
-const port = 3000;
+const cors = require('cors');
 
-// Middleware
-app.use(cors()); // Autoriser les requêtes cross-origin
-app.use(express.json()); // Analyser le JSON
+app.use(express.json()); // Middleware pour analyser le JSON
+app.use(cors());
 
-// Clé secrète pour les JWT
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret'; // Remplacez par une valeur sécurisée
-
-// Routes des équipements
-app.use('/routes/equipements', equipementsRoute);
+// Clé secrète pour signer les JWT
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Inscription
-app.post('/register', async (req, res) => {
+app.post('/registrer', async (req, res) => {
     const { nom, email, password } = req.body;
-
+  
+    const adresseMail = email;
     try {
-        // Vérifier si l'utilisateur existe déjà
-        const existingUser = await prisma.utilisateur.findUnique({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ error: 'Email déjà utilisée' });
-        }
+      // Vérifier si l'utilisateur existe déjà
+      const existingUser = await prisma.utilisateur.findUnique({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email déja utilisée' });
+      }
+  
+      // Hacher le mot de passe
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Hacher le mot de passe
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Créer un nouvel utilisateur
-        const utilisateur = await prisma.utilisateur.create({
-            data: { nom, email, password: hashedPassword },
-        });
-
-        res.status(201).json({ message: 'Utilisateur créé avec succès', utilisateur });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur serveur' });
+      // Créer un nouvel utilisateur
+      const utilisateur = await prisma.utilisateur.create({
+        data: { nom, email, password: hashedPassword },
+      });
+  
+      res.status(201).json({ message: 'Utilisateur créé avec succès', utilisateur });
+      } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Erreur serveur' });
     }
-});
-
-// Connexion
-app.post('/login', async (req, res) => {
+  });
+  
+  // Connexion
+  app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    const adresseMail = email;
     try {
-        // Vérifier si l'utilisateur existe
-        const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
-        if (!utilisateur) {
-            return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
-        }
-
-        // Vérifier le mot de passe
-        const isPasswordValid = await bcrypt.compare(password, utilisateur.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
-        }
-
-        // Générer un token JWT
-        const token = jwt.sign({ utilisateurId: utilisateur.id }, JWT_SECRET, { expiresIn: '1h' });
-
-        res.status(200).json({ message: 'Connexion réussie', token });
+      // Vérifier si l'utilisateur existe
+      const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
+      if (!utilisateur) {
+        return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
+      }
+  
+      // Vérifier le mot de passe
+      const isPasswordValid = await bcrypt.compare(password, utilisateur.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
+      }
+  
+      // Générer un token JWT
+      const token = jwt.sign({ utilisateurId: utilisateur.id }, JWT_SECRET, { expiresIn: '1h' });
+  
+      res.status(200).json({ message: 'Connexion avec succes', token });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur serveur lors de la connexion' });
+        res.status(500).json({ error: 'Il y a eu un erreur pendant la connexion' });
     }
-});
-
-// Middleware pour vérifier les JWT
-function authenticateToken(req, res, next) {
+  });
+  
+  // Middleware pour vérifier le JWT
+  function authenticateToken(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ error: 'Access denied' });
     }
-
+  
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.utilisateur = decoded;
         next();
     } catch (error) {
-        res.status(403).json({ error: 'Invalid token' });
+      res.status(403).json({ error: 'Invalid token' });
     }
-}
-
-// Route protégée (exemple)
-app.get('/profile', authenticateToken, async (req, res) => {
+  }
+  
+  // Route protégée (exemple)
+  app.get('/profil', authenticateToken, async (req, res) => {
     try {
-        const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.utilisateur.utilisateurId } });
+        const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.user.userId } });
         if (!utilisateur) {
-            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+            return res.status(404).json({ error: 'Utilisateur pas trouvé' });
         }
-        res.json(utilisateur);
+      res.json(utilisateur);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur serveur' });
+        res.status(500).json({ error: 'Error' });
     }
-});
+  });
+  
 
 // CRUD Utilisateur
 app.post('/utilisateur', async (req, res) => {
     try {
-        const utilisateur = await prisma.utilisateur.create({ data: req.body });
+        const utilisateur = await prisma.utilisateur.create({
+            data: req.body,
+        });
         res.json(utilisateur);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Erreur lors de la création de l'utilisateur" });
+        res.status(500).json({ error: 'Erreur lors de la création de l\'utilisateur' });
     }
 });
 
 // CRUD Réservation
 app.post('/reservation', async (req, res) => {
     try {
-        const reservation = await prisma.reservation.create({ data: req.body });
+        const reservation = await prisma.reservation.create({
+            data: req.body,
+        });
         res.json(reservation);
     } catch (error) {
         console.error(error);
@@ -125,31 +123,35 @@ app.post('/reservation', async (req, res) => {
     }
 });
 
-// Stripe - Créer un PaymentIntent
+// Route pour créer un PaymentIntent avec Stripe
 app.post('/create-payment-intent', async (req, res) => {
     try {
-        const { amount } = req.body;
+        const { amount } = req.body; // Montant en centimes (par exemple 5000 pour 50€)
 
+        // Créer un PaymentIntent
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount,
             currency: 'eur',
-            payment_method_types: ['card'],
+            payment_method_types: ['card'], // Types de paiement autorisés
         });
 
-        res.send({ clientSecret: paymentIntent.client_secret });
+        // Retourner le clientSecret à utiliser dans le frontend
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'Erreur lors de la création du paiement' });
     }
 });
 
-// Stripe - Traitement du paiement
+// Route pour traiter un paiement après confirmation du client
 app.post('/charge', async (req, res) => {
     const { paymentMethodId } = req.body;
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: 5000,
+            amount: 5000, // Montant en centimes (50€)
             currency: 'eur',
             payment_method: paymentMethodId,
             confirm: true,
@@ -163,6 +165,6 @@ app.post('/charge', async (req, res) => {
 });
 
 // Lancer le serveur
-app.listen(port, () => {
-    console.log(`Backend démarré sur http://localhost:${port}`);
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
