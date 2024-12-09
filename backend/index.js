@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 const cors = require('cors');
-const equipementsRoute = require('./routes/equipements');
 
 app.use(express.json()); // Middleware pour analyser le JSON
 app.use(cors());
