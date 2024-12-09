@@ -72,15 +72,19 @@ export default {
   data() {
     return {
       equipements: [], // Liste des équipements récupérés depuis l'API
+      error: null, // Variable d'erreur
     };
   },
   methods: {
     async fetchEquipements() {
       try {
         const response = await axios.get("http://localhost:3000/api/equipements");
+        console.log("Equipements récupérés :", response.data);  // Log des données
         this.equipements = response.data; // Récupération des équipements depuis l'API
+        this.error = null; // Réinitialiser l'erreur si tout se passe bien
       } catch (error) {
         console.error("Erreur lors de la récupération des équipements :", error);
+        this.error = error.message; // Enregistrer l'erreur
       }
     },
   },

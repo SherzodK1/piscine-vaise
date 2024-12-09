@@ -18,7 +18,7 @@ app.use(express.json()); // Analyser le JSON
 const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret'; // Remplacez par une valeur sécurisée
 
 // Routes des équipements
-app.use('/api/equipements', equipementsRoute);
+app.use('/routes/equipements', equipementsRoute);
 
 // Inscription
 app.post('/register', async (req, res) => {
