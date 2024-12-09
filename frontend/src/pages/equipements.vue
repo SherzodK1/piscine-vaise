@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Importation correcte du composant AppHeader -->
     <AppHeader />
     <v-main>
       <!-- Section Hero -->
@@ -17,7 +16,6 @@
           <p class="white--text ma-2">
             Explorez notre large gamme d'équipements pour vos activités sportives.
           </p>
-          <v-btn color="primary" dark large>Découvrir plus</v-btn>
         </v-container>
       </v-img>
 
@@ -28,24 +26,25 @@
         </h2>
         <v-row>
           <v-col
-            v-for="equipe in equipe"
-            :key="equipe.id"
+            v-for="equipement in equipements"
+            :key="equipement.id_Equipement"
             cols="12"
             sm="6"
             md="4"
             class="d-flex justify-center mb-6"
           >
             <v-card class="text-center rounded-lg" outlined>
+              <!-- Image dynamique ou placeholder -->
               <v-img
-                :src="`https://picsum.photos/400/400?random=${equipe.id}`"
+                :src="equipement.image || 'https://via.placeholder.com/400'"
                 height="200"
                 cover
               ></v-img>
-              <v-card-title class="text-h5">{{ equipe.title }}</v-card-title>
+              <v-card-title class="text-h5">{{ equipement.nom }}</v-card-title>
               <v-card-text>
-                <p>Description : {{ equipe.description }}</p>
-                <p>Quantité totale : {{ equipe.quantTotal }}</p>
-                <p>Quantité actuelle : {{ equipe.quantActuelle }}</p>
+                <p>Type : {{ equipement.type }}</p>
+                <p>Quantité totale : {{ equipement.quantite }}</p>
+                <p>Durée : {{ equipement.duree }} heures</p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>
@@ -55,14 +54,12 @@
         </v-row>
       </v-container>
     </v-main>
-
-    <!-- Importation correcte du composant AppFooter -->
     <AppFooter />
   </div>
 </template>
 
 <script>
-// Importation des composants nécessaires
+import axios from "axios";
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
 
@@ -74,35 +71,43 @@ export default {
   },
   data() {
     return {
-      equipe: [
-        {
-          id: 1,
-          title: "Planche 1m",
-          description: "Planche en mousse de 1m de long et 0,5m de large",
-          quantTotal: 30,
-          quantActuelle: 8,
-        },
-        {
-          id: 2,
-          title: "Lunettes de bain",
-          description: "Lunettes de bain pour enfants de 8 à 10 ans",
-          quantTotal: 54,
-          quantActuelle: 54,
-        },
-        {
-          id: 3,
-          title: "Bouée de nage",
-          description:
-            "Bouée de nage pour enfants ainsi que les personnes qui apprennent la nage",
-          quantTotal: 54,
-          quantActuelle: 54,
-        },
-      ],
+      equipements: [], // Liste des équipements récupérés depuis l'API
+      error: null, // Variable d'erreur
     };
+  },
+  methods: {
+    async fetchEquipements() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/equipements");
+        console.log("Equipements récupérés :", response.data);  // Log des données
+        this.equipements = response.data; // Récupération des équipements depuis l'API
+        this.error = null; // Réinitialiser l'erreur si tout se passe bien
+      } catch (error) {
+        console.error("Erreur lors de la récupération des équipements :", error);
+        this.error = error.message; // Enregistrer l'erreur
+      }
+    },
+  },
+  mounted() {
+    this.fetchEquipements(); // Appeler l'API lors du montage
   },
 };
 </script>
 
 <style scoped>
-/* Ajoutez vos styles ici si nécessaire */
+.v-main {
+  background-color: #121212;
+}
+
+.v-container {
+  padding: 0 24px;
+}
+
+.v-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.v-card:hover {
+  transform: scale(1.05);
+}
 </style>
