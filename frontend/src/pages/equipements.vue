@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Composant AppHeader -->
     <AppHeader />
     <v-main>
       <!-- Section Hero -->
@@ -17,7 +16,6 @@
           <p class="white--text ma-2">
             Explorez notre large gamme d'équipements pour vos activités sportives.
           </p>
-          <v-btn color="primary" dark large>Découvrir plus</v-btn>
         </v-container>
       </v-img>
 
@@ -46,7 +44,7 @@
               <v-card-text>
                 <p>Type : {{ equipement.type }}</p>
                 <p>Quantité totale : {{ equipement.quantite }}</p>
-                <p>Durée : {{ equipement.duree }}</p>
+                <p>Durée : {{ equipement.duree }} heures</p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>
@@ -56,8 +54,6 @@
         </v-row>
       </v-container>
     </v-main>
-
-    <!-- Composant AppFooter -->
     <AppFooter />
   </div>
 </template>
@@ -82,15 +78,14 @@ export default {
     async fetchEquipements() {
       try {
         const response = await axios.get("http://localhost:3000/api/equipements");
-        this.equipements = response.data;
+        this.equipements = response.data; // Récupération des équipements depuis l'API
       } catch (error) {
         console.error("Erreur lors de la récupération des équipements :", error);
       }
     },
   },
   mounted() {
-    // Appeler l'API lors du montage du composant
-    this.fetchEquipements();
+    this.fetchEquipements(); // Appeler l'API lors du montage
   },
 };
 </script>

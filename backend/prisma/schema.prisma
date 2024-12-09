@@ -14,16 +14,16 @@ model Utilisateur {
   adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
   motDePasse      String?  @db.VarChar(50)
   numeroTelephone String?  @db.VarChar(50)
-  image           String?  @db.VarChar(50)
+  image           Bytes?
   Admin           Admin?
   Client          Client?
+  Empreints       Empreinter[]  // Relation vers Empreinter
 }
 
 model Admin {
   Id_Utilisateur Int          @id
   Utilisateur    Utilisateur  @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Admin_ibfk_1")
   Cours          Cours[]
-  Equipement     Equipement[] @relation("AdminEquipement")
   Espace         Espace[]
   Evenement      Evenement[]
 }
@@ -34,7 +34,6 @@ model Client {
   Id_Forfait     Int?
   Utilisateur    Utilisateur     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_1")
   Forfait        Forfait?        @relation(fields: [Id_Forfait], references: [Id_Forfait], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_2")
-  Empreinter     Empreinter[]
   Espace         Espace[]
   S_enregistrer  S_enregistrer[]
   S_inscrire     S_inscrire[]
@@ -51,7 +50,7 @@ model Cours {
   places         Int?
   horaire        DateTime?    @db.DateTime(0)
   dateCours      DateTime?    @db.Date
-  image          String?      @db.VarChar(50)
+  image          Bytes?
   Id_Salle       Int          @unique(map: "Id_Salle")
   Id_Utilisateur Int?
   Salle          Salle        @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_1")
@@ -61,26 +60,15 @@ model Cours {
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model Empreinter {
-  id_Equipement  Int
-  Id_Utilisateur Int
-  Equipement     Equipement @relation(fields: [id_Equipement], references: [id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
-  Client         Client     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_2")
-
-  @@id([id_Equipement, Id_Utilisateur])
-  @@index([Id_Utilisateur], map: "Id_Utilisateur")
-}
-
 model Equipement {
-  id_Equipement Int     @id @default(autoincrement())
+  id_Equipement Int       @id @default(autoincrement())
   nom           String
   type          String
   quantite      Int
-  duree         String
-  image         String?
+  duree         Decimal
+  image         Bytes?
   createdAt     DateTime @default(now())
-  Admin         Admin?   @relation("AdminEquipement")
-  Empreinter    Empreinter[]
+  Empreints       Empreinter[]  // Relation vers Empreinter
 }
 
 model Espace {
@@ -105,7 +93,7 @@ model Evenement {
   places             Int?
   duree              Decimal?        @db.Decimal(15, 2)
   dateHeureEvenement DateTime?       @db.Date
-  image              String?         @db.VarChar(50)
+  image              Bytes?
   Id_Salle           Int             @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
   Salle              Salle           @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Evenement_ibfk_1")
@@ -160,4 +148,16 @@ model Salle {
   capacite  String?    @db.VarChar(50)
   Cours     Cours?
   Evenement Evenement?
+}
+
+model Empreinter {
+  Id_Utilisateur Int
+  Id_Equipement  Int
+  dateEmpreint   DateTime @db.DateTime(0)
+  duree          Decimal  @db.Decimal(15, 2)
+  Utilisateur    Utilisateur @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
+  Equipement     Equipement  @relation(fields: [Id_Equipement], references: [id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_2")
+
+  @@id([Id_Utilisateur, Id_Equipement]) // Clé primaire composite
+  @@index([Id_Equipement], map: "Id_Equipement") // Index sur l'équipement
 }
