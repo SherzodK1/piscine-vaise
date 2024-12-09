@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 const cors = require('cors');
+const equipementsRoute = require('./routes/equipements');
 
 app.use(express.json()); // Middleware pour analyser le JSON
 app.use(cors());
@@ -20,21 +21,21 @@ app.post('/registrer', async (req, res) => {
     const adresseMail = email;
     try {
       // Vérifier si l'utilisateur existe déjà
-      const existingUser = await prisma.utilisateur.findUnique({ where: { adresseMail } });
+      const existingUser = await prisma.utilisateur.findUnique({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ error: 'Email déja utilisée' });
       }
   
       // Hacher le mot de passe
       const hashedPassword = await bcrypt.hash(password, 10);
-  
+
       // Créer un nouvel utilisateur
       const utilisateur = await prisma.utilisateur.create({
-        data: { nom, adresseMail, motDePasse: hashedPassword },
+        data: { nom, email, password: hashedPassword },
       });
   
       res.status(201).json({ message: 'Utilisateur créé avec succès', utilisateur });
-    } catch (error) {
+      } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Erreur serveur' });
     }
@@ -47,23 +48,23 @@ app.post('/registrer', async (req, res) => {
     const adresseMail = email;
     try {
       // Vérifier si l'utilisateur existe
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { adresseMail } });
+      const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
       if (!utilisateur) {
         return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
       }
   
       // Vérifier le mot de passe
-      const isPasswordValid = await bcrypt.compare(password, utilisateur.motDePasse);
+      const isPasswordValid = await bcrypt.compare(password, utilisateur.password);
       if (!isPasswordValid) {
         return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
       }
   
       // Générer un token JWT
-      const token = jwt.sign({ utilisateurId: utilisateur.Id_Utilisateur }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ utilisateurId: utilisateur.id }, JWT_SECRET, { expiresIn: '1h' });
   
       res.status(200).json({ message: 'Connexion avec succes', token });
     } catch (error) {
-      res.status(500).json({ error: 'Erreur serveur' });
+        res.status(500).json({ error: 'Il y a eu un erreur pendant la connexion' });
     }
   });
   
@@ -71,13 +72,13 @@ app.post('/registrer', async (req, res) => {
   function authenticateToken(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      return res.status(401).json({ error: 'Access denied' });
+        return res.status(401).json({ error: 'Access denied' });
     }
   
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      req.utilisateur = decoded;
-      next();
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.utilisateur = decoded;
+        next();
     } catch (error) {
       res.status(403).json({ error: 'Invalid token' });
     }
@@ -86,13 +87,13 @@ app.post('/registrer', async (req, res) => {
   // Route protégée (exemple)
   app.get('/profil', authenticateToken, async (req, res) => {
     try {
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.utilisateur.Id_Utilisateur } });
-      if (!utilisateur) {
-        return res.status(404).json({ error: 'Utilisateur pas trouvé' });
-      }
+        const utilisateur = await prisma.utilisateur.findUnique({ where: { id: req.user.userId } });
+        if (!utilisateur) {
+            return res.status(404).json({ error: 'Utilisateur pas trouvé' });
+        }
       res.json(utilisateur);
     } catch (error) {
-      res.status(500).json({ error: 'Error serveur' });
+        res.status(500).json({ error: 'Error' });
     }
   });
   
