@@ -13,7 +13,6 @@ import { routes as autoRoutes } from 'vue-router/auto-routes';
 import PageProfil from '@/pages/pageProfil.vue';
 import Reservation from '@/pages/reservationSalle.vue';
 
-// Definir las rutas manualmente
 const routes = [
   ...autoRoutes, // Incluye rutas automáticas si las estás utilizando
   {
@@ -33,15 +32,13 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-})
-
+});
 
 // Guard de navegación para verificar autenticación
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('jwt'); // Verificar si hay un token JWT almacenado
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    // Redirigir al login y pasar el destino deseado como parámetro (para redirección posterior)
     next({ name: 'Login', query: { redirect: to.fullPath } });
   } else {
     next(); // Continuar la navegación
@@ -67,4 +64,5 @@ router.onError((err, to) => {
 router.isReady().then(() => {
   localStorage.removeItem('vuetify:dynamic-reload');
 });
-export default router
+
+export default router;
