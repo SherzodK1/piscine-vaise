@@ -50,13 +50,13 @@
                 height="200"
                 cover
               ></v-img>
-              <v-card-title class="text-h5">{{ cours.nom }}</v-card-title>
+              <v-card-title class="text-h5">{{ cour.nom }}</v-card-title>
               <v-card-text>
-                <p> {{ cours.type }}</p>
-                <p>Capacité : {{ cours.places }}</p>
-                <p>Durée : {{ cours.duree }} heures</p>
-                <p>Lieu : {{ Id_Salle.duree }} </p>
-                <p>Intervenant : {{ Id_Utilisateur.duree }} </p>
+                <p> {{ cour.type }}</p>
+                <p>Capacité : {{ cour.places }}</p>
+                <p>Durée : {{ cour.duree }} heures</p>
+                <p>Lieu : {{ cour.Id_Salle }} </p>
+                <p>Intervenant : {{ cour.Id_Utilisateur }} </p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>

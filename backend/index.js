@@ -178,10 +178,6 @@ app.post("/charge", async (req, res) => {
   }
 });
 
-// Lancer le serveur
-app.listen(port, () => {
-  console.log(`Backend démarré sur http://localhost:${port}`);
-});
 
 // Route pour récupérer tous les equipements
 app.get("/equipement", async (req, res) => {
@@ -196,8 +192,32 @@ app.get("/equipement", async (req, res) => {
   }
 });
 
+// Route pour récupérer tous les évenements
+app.get("/evenement", async (req, res) => {
+  try {
+    const evenements = await prisma.evenement.findMany();
+    res.json(evenements);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des evenements." });
+  }
+});
+
+// Route pour récupérer tous les cours
+app.get("/cours", async (req, res) => {
+  try {
+    const cours = await prisma.cours.findMany();
+    res.json(cours);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des cours." });
+  }
+});
 // Démarrage du serveur
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Backend en écoute sur http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Backend en écoute sur http://localhost:${port}`);
 });

@@ -36,7 +36,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@stripe/stripe-js': fileURLToPath(new URL('./node_modules/@stripe/stripe-js', import.meta.url)), // Alias Stripe ici
-      '@equipements': resolve(__dirname, './src/components/equipements.js'), // Alias pour le composant des équipements
+      '@equipements': resolve(__dirname, './src/components/apiequipements.js'), // Alias pour le composant des équipements
+      '@evenements': resolve(__dirname, './src/components/apievenement.js'), // Alias pour le composant des équipements
+      '@cours': resolve(__dirname, './src/components/apicours.js'), // Alias pour le composant des équipements
+
     },
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },

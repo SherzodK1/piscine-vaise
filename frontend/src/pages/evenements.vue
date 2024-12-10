@@ -12,28 +12,28 @@
         <v-container
           class="bg-grey-darken-4 text-center d-flex flex-column align-center justify-start rounded-pill opacity-80 py-6 px-8"
         >
-          <h1 class="text-h3 white--text">Nos Événements</h1>
+          <h1 class="text-h3 white--text">Nos Évenements</h1>
           <p class="white--text ma-2">
-            Explorez notre large gamme d'événements pour vos activités sportives.
+            Explorez notre large gamme d'équipements pour vos activités sportives.
           </p>
         </v-container>
       </v-img>
 
-      <!-- Section Événements -->
+      <!-- Section Évenements -->
       <v-container fluid class="my-8 bg-blue-darken-4 py-12">
         <h2 class="text-center white--text mb-8 text-h4">
-          Événements disponibles
+          Évenements disponibles
         </h2>
 
         <!-- Chargement ou Erreur -->
         <div v-if="loading" class="text-center white--text">
-          Chargement des événements...
+          Chargement des évenements...
         </div>
         <div v-if="error" class="text-center red--text">
           Erreur : {{ error }}
         </div>
 
-        <!-- Liste des équipements -->
+        <!-- Liste des évenements -->
         <v-row v-if="evenements && evenements.length > 0">
           <v-col
             v-for="evenement in evenements"
@@ -46,16 +46,15 @@
             <v-card class="text-center rounded-lg" outlined>
               <!-- Affichage de l'image à partir de Blob -->
               <v-img
-                :src="getImageUrl(evenement.imageBytes)"
+                :src="getImageUrl(evenements.imageBytes)"
                 height="200"
                 cover
               ></v-img>
               <v-card-title class="text-h5">{{ evenement.nom }}</v-card-title>
               <v-card-text>
-                <p>Capacité : {{ evenement.places }}</p>
+                <p>{{ evenement.description }}</p>
                 <p>Durée : {{ evenement.duree }} heures</p>
-                <p>Lieu : {{ Id_Salle.duree }} </p>
-                <p>Intervenant : {{ Id_Utilisateur.duree }} </p>
+                <p>Date : {{ evenement.dateHeureEvenement }} </p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>
@@ -64,9 +63,9 @@
           </v-col>
         </v-row>
 
-        <!-- Message si aucun équipement -->
+        <!-- Message si aucun cours -->
         <div v-else class="text-center white--text">
-          Aucun événements disponible pour le moment.
+          Aucun évenement disponible pour le moment.
         </div>
       </v-container>
     </v-main>
@@ -87,7 +86,7 @@ export default {
   },
   data() {
     return {
-      evenements: [], // Liste des équipements
+      evenements: [], // Liste des evenement
       loading: true, // Indicateur de chargement
       error: null, // Variable pour les erreurs
     };
@@ -115,7 +114,7 @@ export default {
     },
   },
   async created() {
-    await this.fetchEquipements(); // Récupérer les équipements
+    await this.fetchEvenements(); // Récupérer les équipements
   },
 };
 </script>

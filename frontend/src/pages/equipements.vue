@@ -46,17 +46,15 @@
             <v-card class="text-center rounded-lg" outlined>
               <!-- Affichage de l'image à partir de Blob -->
               <v-img
-                :src="getImageUrl(cours.imageBytes)"
+                :src="getImageUrl(equipements.imageBytes)"
                 height="200"
                 cover
               ></v-img>
-              <v-card-title class="text-h5">{{ cours.nom }}</v-card-title>
+              <v-card-title class="text-h5">{{ equipement.nom }}</v-card-title>
               <v-card-text>
-                <p>{{ cours.description }}</p>
-                <p>Places : {{ cours.places }} personnes</p>
-                <p>Intervenant : {{ cours.Id_Utilisateur }} personnes</p>
-                <p>Durée : {{ cours.duree }} heures</p>
-                <p>Date : {{ cours.date }} heures</p>
+                <p>Type : {{ equipement.type }}</p>
+                <p>Durée : {{ equipement.duree }} heures</p>
+                <p>Date : {{ equipement.createdAt }} </p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>
@@ -67,7 +65,7 @@
 
         <!-- Message si aucun cours -->
         <div v-else class="text-center white--text">
-          Aucun cours disponible pour le moment.
+          Aucun équipements disponible pour le moment.
         </div>
       </v-container>
     </v-main>
