@@ -1,127 +1,144 @@
-<template class="bg-white">
- <AppHeader/>
-<v-container fluid class="my-8 bg-blue-darken-4 py-12">
-      <h2 class="text-center white--text mb-8 text-h4">
-        Nos cours adaptés à tous les goûts
-      </h2>
-      <v-row>
-        <v-col
-          v-for="cours in cours"
-          :key="cours.id"
-          cols="12"
-          sm="6"
-          md="4"
-          class="d-flex justify-center mb-6"
+<template>
+  <div>
+    <AppHeader />
+    <v-main>
+      <!-- Section Hero -->
+      <v-img
+        src="https://picsum.photos/400/400?random=5"
+        max-height="600px"
+        cover
+        class="d-flex justify-start align-center mb-14"
+      >
+        <v-container
+          class="bg-grey-darken-4 text-center d-flex flex-column align-center justify-start rounded-pill opacity-80 py-6 px-8"
         >
-          <v-card class="text-center rounded-lg" outlined>
-            <v-img
-              :src="`https://picsum.photos/400/400?random=${cours.id}`"
-              height="200"
-              cover
-            ></v-img>
-            <v-card-title class="text-h5">{{ cours.title }}</v-card-title>
-            <v-card-text>
-              <p>Description : {{ cours.description }}</p>
-              <p>Capacité : {{ cours.capacite }}</p>
-              <p>Places restantes : {{ cours.placesRestantes }}</p>
-              <p>Intervenant : {{ cours.intervenant }}</p>
-              <p>Horaire : {{ cours.Horaire }}</p>
-              <p>Date : {{ cours.date }}</p>
-              <p>Lieu : {{ cours.lieu }}</p>
-            </v-card-text>
-            <v-card-actions class="d-flex justify-center">
-  <v-btn color="primary" href="coursreglement">Plus d'informations</v-btn>
-</v-card-actions>
+          <h1 class="text-h3 white--text">Nos Cours</h1>
+          <p class="white--text ma-2">
+            Explorez notre large gamme de Cours pour vos activités sportives.
+          </p>
+        </v-container>
+      </v-img>
 
+      <!-- Section Cours -->
+      <v-container fluid class="my-8 bg-blue-darken-4 py-12">
+        <h2 class="text-center white--text mb-8 text-h4">
+          Cours disponibles
+        </h2>
 
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+        <!-- Chargement ou Erreur -->
+        <div v-if="loading" class="text-center white--text">
+          Chargement des cousr...
+        </div>
+        <div v-if="error" class="text-center red--text">
+          Erreur : {{ error }}
+        </div>
 
-    <!-- Section Footer -->
-    <AppFooter/>
+        <!-- Liste des cours -->
+        <v-row v-if="cours && cours.length > 0">
+          <v-col
+            v-for="cour in cours"
+            :key="cours.id"
+            cols="12"
+            sm="6"
+            md="4"
+            class="d-flex justify-center mb-6"
+          >
+            <v-card class="text-center rounded-lg" outlined>
+              <!-- Affichage de l'image à partir de Blob -->
+              <v-img
+                :src="getImageUrl(cours.imageBytes)"
+                height="200"
+                cover
+              ></v-img>
+              <v-card-title class="text-h5">{{ cour.nom }}</v-card-title>
+              <v-card-text>
+                <p> {{ cour.type }}</p>
+                <p>Capacité : {{ cour.places }}</p>
+                <p>Durée : {{ cour.duree }} heures</p>
+                <p>Lieu : {{ cour.Id_Salle }} </p>
+                <p>Intervenant : {{ cour.Id_Utilisateur }} </p>
+              </v-card-text>
+              <v-card-actions class="d-flex justify-center">
+                <v-btn color="primary">Informations location</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Message si aucun cours -->
+        <div v-else class="text-center white--text">
+          Aucun cours disponible pour le moment.
+        </div>
+      </v-container>
+    </v-main>
+    <AppFooter />
+  </div>
 </template>
 
 <script>
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import api from "@/components/apicours"; // L'API pour les requêtes
+
 export default {
   name: "CoursPage",
+  components: {
+    AppHeader,
+    AppFooter,
+  },
   data() {
     return {
-      cours: [
-        {
-          id: 1,
-          title: "Initiation au surf",
-          description: "Cours d'initiation au surf, ouvert à tous",
-          capacite: 30,
-          placesRestantes: 8,
-          intervenant: "Patrick Grosjean",
-          Horaire: "13h00 à 14h00",
-          date: "20/10/2024",
-          lieu: "Piscine B",
-        },
-        {
-          id: 2,
-          title: "Plongeon",
-          description:
-            "Cours d'apprentissage des différentes méthodes de plongeon",
-          capacite: 16,
-          placesRestantes: 8,
-          intervenant: "Robert Asgard",
-          Horaire: "8h30 à 10h00",
-          date: "14/10/2024",
-          lieu: "Piscine A",
-        },
-        {
-          id: 3,
-          title: "Water-polo",
-          description: "Cours d'entraînement pour l'équipe U11",
-          capacite: 30,
-          placesRestantes: 17,
-          intervenant: "Patrick Grosjean",
-          Horaire: "18h30 à 20h00",
-          date: "13/10/2024",
-          lieu: "Piscine C",
-        },
-        {
-          id: 4,
-          title: "Cours en salle",
-          description: "Cours en salle avec un coach sportif",
-          capacite: 30,
-          placesRestantes: 28,
-          intervenant: "Patrick Grosjean",
-          Horaire: "13h00 à 14h00",
-          date: "19/10/2024",
-          lieu: "Salle 301",
-        },
-        {
-          id: 5,
-          title: "Musculation",
-          description:
-            "Cours de musculation avec machines de course et d'haltérophilie",
-          capacite: 14,
-          placesRestantes: 3,
-          intervenant: "David Fernandes",
-          Horaire: "13h00 à 14h00",
-          date: "24/10/2024",
-          lieu: "Salle 302",
-        },
-        {
-          id: 6,
-          title: "Yoga",
-          description: "Séances pour améliorer votre souplesse et votre zen",
-          capacite: 30,
-          placesRestantes: 8,
-          intervenant: "Marie Laurent",
-          Horaire: "13h00 à 14h00",
-          date: "23/10/2024",
-          lieu: "Salle Zen",
-        },
-      ],
+      cours: [], // Liste des équipements
+      loading: true, // Indicateur de chargement
+      error: null, // Variable pour les erreurs
     };
+  },
+  methods: {
+    async fetchCours() {
+      try {
+        const response = await api.getCours();
+        this.cours = response.data; // Assignation des équipements
+      } catch (err) {
+        this.error = err.message; // Gestion des erreurs
+      } finally {
+        this.loading = false; // Fin du chargement
+      }
+    },
+    /**
+     * Convertit un tableau d'octets en URL utilisable pour l'image.
+     * @param {Uint8Array} byteArray - Les données de l'image en Bytes.
+     * @returns {string} - L'URL Blob de l'image.
+     */
+    getImageUrl(byteArray) {
+      if (!byteArray) return "https://via.placeholder.com/400"; // Placeholder si aucune image
+      const blob = new Blob([byteArray], { type: "image/jpeg" }); // Conversion en Blob
+      return URL.createObjectURL(blob); // Création de l'URL Blob
+    },
+  },
+  async created() {
+    await this.fetchCours(); // Récupérer les équipements
   },
 };
 </script>
 
 <style scoped>
+.v-main {
+  background-color: #121212;
+}
+
+.v-container {
+  padding: 0 24px;
+}
+
+.v-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.v-card:hover {
+  transform: scale(1.05);
+}
+
+.red--text {
+  color: red;
+}
 </style>

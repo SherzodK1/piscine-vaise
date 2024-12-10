@@ -7,85 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Utilisateur {
-  Id_Utilisateur  Int      @id @default(autoincrement())
-  nom             String?  @db.VarChar(50)
-  estAdmin        Boolean?
-  adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
-  motDePasse      String?  @db.VarChar(256)
-  numeroTelephone String?  @db.VarChar(50)
-  image           String?  @db.Varchar(50)
-  Admin           Admin?
-  Client          Client?
+model admin {
+  Id_Utilisateur Int @id
 }
 
-model Admin {
-  Id_Utilisateur Int          @id
-  Utilisateur    Utilisateur  @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Admin_ibfk_1")
-  Cours          Cours[]
-  Equipement     Equipement[]
-  Espace         Espace[]
-  Evenement      Evenement[]
-}
-
-model Client {
-  Id_Utilisateur Int             @id
+model client {
+  Id_Utilisateur Int      @id
   estAbonne      Boolean?
   Id_Forfait     Int?
-  Utilisateur    Utilisateur     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_1")
-  Forfait        Forfait?        @relation(fields: [Id_Forfait], references: [Id_Forfait], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_2")
-  Empreinter     Empreinter[]
-  Espace         Espace[]
-  S_enregistrer  S_enregistrer[]
-  S_inscrire     S_inscrire[]
 
   @@index([Id_Forfait], map: "Id_Forfait")
 }
 
-model Cours {
-  Id_Cours       Int          @id @default(autoincrement())
-  nom            String?      @db.VarChar(50)
-  interventeur   String?      @db.VarChar(50)
-  description    String?      @db.Text
-  duree          Decimal?     @db.Decimal(15, 2)
+model cours {
+  Id_Cours       Int       @id @default(autoincrement())
+  nom            String?   @db.VarChar(50)
+  interventeur   String?   @db.VarChar(50)
+  description    String?   @db.Text
+  duree          Decimal?  @db.Decimal(15, 2)
   places         Int?
-  horaire        DateTime?    @db.DateTime(0)
-  dateCours      DateTime?    @db.Date
-  image          String?      @db.Varchar(50)
-  Id_Salle       Int          @unique(map: "Id_Salle")
+  horaire        DateTime? @db.DateTime(0)
+  dateCours      DateTime? @db.Date
+  Id_Salle       Int       @unique(map: "Id_Salle")
   Id_Utilisateur Int?
-  Salle          Salle        @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_1")
-  Admin          Admin?       @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_2")
-  S_inscrire     S_inscrire[]
+  image          Bytes?
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model Empreinter {
+model empreinter {
   Id_Equipement  Int
   Id_Utilisateur Int
-  Equipement     Equipement @relation(fields: [Id_Equipement], references: [Id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
-  Client         Client     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_2")
+  dateEmpreint   DateTime @db.DateTime(0)
+  duree          Decimal  @db.Decimal(15, 2)
 
-  @@id([Id_Equipement, Id_Utilisateur])
+  @@id([Id_Utilisateur, Id_Equipement])
+  @@index([Id_Equipement], map: "Id_Equipement")
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model Equipement {
-  Id_Equipement  Int          @id @default(autoincrement())
-  nom            String?      @db.VarChar(50)
-  type           String?      @db.VarChar(50)
-  quantit_       Int?         @map("quantité")
-  duree          Decimal?     @db.Decimal(15, 2)
-  image          String?      @db.Varchar(50)
-  Id_Utilisateur Int?
-  Empreinter     Empreinter[]
-  Admin          Admin?       @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Equipement_ibfk_1")
-
-  @@index([Id_Utilisateur], map: "Id_Utilisateur")
+model equipement {
+  nom           String
+  type          String
+  duree         Decimal
+  createdAt     DateTime @default(now())
+  id_Equipement Int      @id @default(autoincrement())
+  image         Bytes?
+  quantite      Int
 }
 
-model Espace {
+model espace {
   Id_Espace        Int      @id @default(autoincrement())
   nom              String?  @db.VarChar(50)
   places           Int?
@@ -93,73 +64,69 @@ model Espace {
   prix             String?  @db.VarChar(50)
   Id_Utilisateur   Int?
   Id_Utilisateur_1 Int?
-  Client           Client?  @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Espace_ibfk_1")
-  Admin            Admin?   @relation(fields: [Id_Utilisateur_1], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Espace_ibfk_2")
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
   @@index([Id_Utilisateur_1], map: "Id_Utilisateur_1")
 }
 
-model Evenement {
-  Id_Evenement       Int             @id @default(autoincrement())
-  nom                String?         @db.VarChar(50)
-  description        String?         @db.Text
+model evenement {
+  Id_Evenement       Int       @id @default(autoincrement())
+  nom                String?   @db.VarChar(50)
+  description        String?   @db.Text
   places             Int?
-  duree              Decimal?        @db.Decimal(15, 2)
-  dateHeureEvenement DateTime?       @db.Date
-  image              String?         @db.Varchar(50)
-  Id_Salle           Int             @unique(map: "Id_Salle")
+  duree              Decimal?  @db.Decimal(15, 2)
+  dateHeureEvenement DateTime? @db.Date
+  Id_Salle           Int       @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
-  Salle              Salle           @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Evenement_ibfk_1")
-  Admin              Admin?          @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Evenement_ibfk_2")
-  S_enregistrer      S_enregistrer[]
+  image              Bytes?
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model Forfait {
-  Id_Forfait  Int       @id @default(autoincrement())
-  nom         String?   @db.VarChar(50)
-  prix        Decimal?  @db.Decimal(15, 2)
-  description String?   @db.VarChar(50)
-  Client      Client[]
-  Paiement    Paiement?
+model forfait {
+  Id_Forfait  Int      @id @default(autoincrement())
+  nom         String?  @db.VarChar(50)
+  prix        Decimal? @db.Decimal(15, 2)
+  description String?  @db.VarChar(50)
 }
 
-model Paiement {
+model paiement {
   Id_Paiement Int       @id @default(autoincrement())
   dateAchat   DateTime? @db.DateTime(0)
   montant     Decimal?  @db.Decimal(15, 2)
   Id_Forfait  Int       @unique(map: "Id_Forfait")
-  Forfait     Forfait   @relation(fields: [Id_Forfait], references: [Id_Forfait], onDelete: NoAction, onUpdate: NoAction, map: "Paiement_ibfk_1")
 }
 
-model S_enregistrer {
+model s_enregistrer {
   Id_Evenement   Int
   Id_Utilisateur Int
-  Evenement      Evenement @relation(fields: [Id_Evenement], references: [Id_Evenement], onDelete: NoAction, onUpdate: NoAction, map: "S_enregistrer_ibfk_1")
-  Client         Client    @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "S_enregistrer_ibfk_2")
 
   @@id([Id_Evenement, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model S_inscrire {
+model s_inscrire {
   Id_Cours       Int
   Id_Utilisateur Int
-  Cours          Cours  @relation(fields: [Id_Cours], references: [Id_Cours], onDelete: NoAction, onUpdate: NoAction, map: "S_inscrire_ibfk_1")
-  Client         Client @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "S_inscrire_ibfk_2")
 
   @@id([Id_Cours, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
-model Salle {
-  Id_Salle  Int        @id @default(autoincrement())
-  nom       String?    @db.VarChar(50)
-  estLibre  Boolean?
-  type      String?    @db.VarChar(50)
-  capacite  String?    @db.VarChar(50)
-  Cours     Cours?
-  Evenement Evenement?
+model salle {
+  Id_Salle Int      @id @default(autoincrement())
+  nom      String?  @db.VarChar(50)
+  estLibre Boolean?
+  type     String?  @db.VarChar(50)
+  capacite Int?
+}
+
+model utilisateur {
+  Id_Utilisateur  Int      @id @default(autoincrement())
+  nom             String?  @db.VarChar(50)
+  estAdmin        Boolean?
+  adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
+  motDePasse      String?  @db.VarChar(256)
+  numeroTelephone String?  @db.VarChar(50)
+  image           Bytes?
 }

@@ -1,32 +1,60 @@
 <template>
   <div>
     <AppHeader />
-    <v-main>  
-      <!-- Section Équipements -->
+    <v-main>
+      <!-- Section Hero -->
+      <v-img
+        src="https://picsum.photos/400/400?random=5"
+        max-height="600px"
+        cover
+        class="d-flex justify-start align-center mb-14"
+      >
+        <v-container
+          class="bg-grey-darken-4 text-center d-flex flex-column align-center justify-start rounded-pill opacity-80 py-6 px-8"
+        >
+          <h1 class="text-h3 white--text">Nos Évenements</h1>
+          <p class="white--text ma-2">
+            Explorez notre large gamme d'équipements pour vos activités sportives.
+          </p>
+        </v-container>
+      </v-img>
+
+      <!-- Section Évenements -->
       <v-container fluid class="my-8 bg-blue-darken-4 py-12">
         <h2 class="text-center white--text mb-8 text-h4">
-          Événements
+          Évenements disponibles
         </h2>
-        <v-row>
+
+        <!-- Chargement ou Erreur -->
+        <div v-if="loading" class="text-center white--text">
+          Chargement des évenements...
+        </div>
+        <div v-if="error" class="text-center red--text">
+          Erreur : {{ error }}
+        </div>
+
+        <!-- Liste des évenements -->
+        <v-row v-if="evenements && evenements.length > 0">
           <v-col
-            v-for="equipe in equipements"
-            :key="equipe.id"
+            v-for="evenement in evenements"
+            :key="evenement.id"
             cols="12"
             sm="6"
             md="4"
             class="d-flex justify-center mb-6"
           >
             <v-card class="text-center rounded-lg" outlined>
+              <!-- Affichage de l'image à partir de Blob -->
               <v-img
-                :src="equipe.imageUrl || `https://picsum.photos/400/400?random=${equipe.id}`"
+                :src="getImageUrl(evenements.imageBytes)"
                 height="200"
                 cover
               ></v-img>
-              <v-card-title class="text-h5">{{ equipe.title }}</v-card-title>
+              <v-card-title class="text-h5">{{ evenement.nom }}</v-card-title>
               <v-card-text>
-                <p>Description : {{ equipe.description }}</p>
-                <p>Quantité totale : {{ equipe.quantTotal }}</p>
-                <p>Quantité actuelle : {{ equipe.quantActuelle }}</p>
+                <p>{{ evenement.description }}</p>
+                <p>Durée : {{ evenement.duree }} heures</p>
+                <p>Date : {{ evenement.dateHeureEvenement }} </p>
               </v-card-text>
               <v-card-actions class="d-flex justify-center">
                 <v-btn color="primary">Informations location</v-btn>
@@ -34,39 +62,81 @@
             </v-card>
           </v-col>
         </v-row>
+
+        <!-- Message si aucun cours -->
+        <div v-else class="text-center white--text">
+          Aucun évenement disponible pour le moment.
+        </div>
       </v-container>
     </v-main>
-
     <AppFooter />
   </div>
 </template>
 
 <script>
-import AppHeader from "@/components/AppHeader.vue"; // Remplacez par le chemin réel vers votre composant
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import api from "@/components/apievenements"; // L'API pour les requêtes
 
 export default {
-  name: "EquipementsPage",
-
+  name: "EvenementPage",
   components: {
-    AppHeader, // Ajoutez votre composant header ici
+    AppHeader,
+    AppFooter,
   },
-
   data() {
     return {
-      equipements: [], // Liste des équipements récupérés depuis l'API
+      evenements: [], // Liste des evenement
+      loading: true, // Indicateur de chargement
+      error: null, // Variable pour les erreurs
     };
   },
-  created() {
-    // Récupérer les équipements depuis l'API
-    fetch('http://localhost:3000/api/equipements') // Assurez-vous que l'API est lancée sur ce port
-      .then(response => response.json())
-      .then(data => {
-        this.equipements = data;
-      })
-      .catch(error => console.error("Erreur lors de la récupération des équipements : ", error));
+  methods: {
+    async fetchEvenements() {
+      try {
+        const response = await api.getEvenements();
+        this.evenements = response.data; // Assignation des équipements
+      } catch (err) {
+        this.error = err.message; // Gestion des erreurs
+      } finally {
+        this.loading = false; // Fin du chargement
+      }
+    },
+    /**
+     * Convertit un tableau d'octets en URL utilisable pour l'image.
+     * @param {Uint8Array} byteArray - Les données de l'image en Bytes.
+     * @returns {string} - L'URL Blob de l'image.
+     */
+    getImageUrl(byteArray) {
+      if (!byteArray) return "https://via.placeholder.com/400"; // Placeholder si aucune image
+      const blob = new Blob([byteArray], { type: "image/jpeg" }); // Conversion en Blob
+      return URL.createObjectURL(blob); // Création de l'URL Blob
+    },
+  },
+  async created() {
+    await this.fetchEvenements(); // Récupérer les équipements
   },
 };
 </script>
 
 <style scoped>
+.v-main {
+  background-color: #121212;
+}
+
+.v-container {
+  padding: 0 24px;
+}
+
+.v-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.v-card:hover {
+  transform: scale(1.05);
+}
+
+.red--text {
+  color: red;
+}
 </style>
