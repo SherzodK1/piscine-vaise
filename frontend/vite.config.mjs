@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite';
-import Vue from '@vitejs/plugin-vue';
-import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
-import Components from 'unplugin-vue-components/vite';
-import ViteFonts from 'unplugin-fonts/vite';
-import VueRouter from 'unplugin-vue-router/vite';
-import { fileURLToPath, URL } from 'node:url';
-import { resolve } from 'path'; // Ajouté pour gérer les chemins
+import { defineConfig } from "vite";
+import Vue from "@vitejs/plugin-vue";
+import Vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import Components from "unplugin-vue-components/vite";
+import ViteFonts from "unplugin-fonts/vite";
+import VueRouter from "unplugin-vue-router/vite";
+import { fileURLToPath, URL } from "node:url";
+import { resolve } from "path"; // Ajouté pour gérer les chemins
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,7 +17,7 @@ export default defineConfig({
     Vuetify({
       autoImport: true,
       styles: {
-        configFile: 'src/styles/settings.scss',
+        configFile: "src/styles/settings.scss",
       },
     }),
     Components(),
@@ -25,8 +25,8 @@ export default defineConfig({
       google: {
         families: [
           {
-            name: 'Roboto',
-            styles: 'wght@100;300;400;500;700;900',
+            name: "Roboto",
+            styles: "wght@100;300;400;500;700;900",
           },
         ],
       },
@@ -34,23 +34,24 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@stripe/stripe-js': fileURLToPath(new URL('./node_modules/@stripe/stripe-js', import.meta.url)), // Alias Stripe ici
-      '@equipements': resolve(__dirname, './src/components/apiequipements.js'), // Alias pour le composant des équipements
-      '@evenements': resolve(__dirname, './src/components/apievenement.js'), // Alias pour le composant des équipements
-      '@cours': resolve(__dirname, './src/components/apicours.js'), // Alias pour le composant des équipements
-
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@stripe/stripe-js": fileURLToPath(
+        new URL("./node_modules/@stripe/stripe-js", import.meta.url)
+      ), // Alias Stripe ici
+      "@equipements": resolve(__dirname, "./src/components/apiequipements.js"), // Alias pour le composant des équipements
+      "@evenements": resolve(__dirname, "./src/components/apievenement.js"), // Alias pour le composant des équipements
+      "@cours": resolve(__dirname, "./src/components/apicours.js"), // Alias pour le composant des équipements
     },
-    extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
+    extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
   },
   server: {
     port: 8080, // Port de développement
     proxy: {
       // Redirection des requêtes API vers votre backend
-      '/api': {
-        target: 'http://localhost:3000', // URL de votre backend
+      "/api": {
+        target: "http://localhost:3000", // URL de votre backend
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
