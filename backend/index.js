@@ -338,6 +338,389 @@ app.get("/cours", async (req, res) => {
   }
 });
 
+app.get("/utilisateurs", async (req, res) => {
+  try {
+    const utilisateurs = await prisma.utilisateur.findMany();
+    res.json(utilisateurs);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des utilisateurs." });
+  }
+});
+
+// Créer un utilisateur
+app.post("/utilisateurs", async (req, res) => {
+  const { nom, adresseMail, numeroTelephone, motDePasse, estAdmin } = req.body;
+
+  // Validation de base des champs (peut être plus complète)
+  if (!nom || !adresseMail || !numeroTelephone) {
+    return res.status(400).json({
+      message: "Nom, adresse e-mail et numéro de téléphone sont requis.",
+    });
+  }
+
+  try {
+    const utilisateur = await prisma.utilisateur.create({
+      data: {
+        nom,
+        adresseMail,
+        numeroTelephone,
+        motDePasse,
+        estAdmin: estAdmin || false, // Valeur par défaut pour estAdmin
+      },
+    });
+    res.status(201).json(utilisateur); // Retourner l'utilisateur créé
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la création de l'utilisateur." });
+  }
+});
+
+// Mettre à jour un utilisateur
+app.put("/utilisateurs/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nom, adresseMail, numeroTelephone, motDePasse, estAdmin } = req.body;
+
+  try {
+    const utilisateur = await prisma.utilisateur.update({
+      where: { Id_Utilisateur: parseInt(id) },
+      data: { nom, adresseMail, numeroTelephone, motDePasse, estAdmin },
+    });
+    res.status(200).json(utilisateur);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(400)
+      .json({ message: "Erreur lors de la mise à jour de l'utilisateur." });
+  }
+});
+
+// Supprimer un utilisateur
+app.delete("/utilisateurs/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.utilisateur.delete({
+      where: { Id_Utilisateur: parseInt(id) },
+    });
+    res.status(204).send(); // Pas de contenu à retourner après une suppression réussie
+  } catch (error) {
+    console.error(error);
+    res
+      .status(400)
+      .json({ message: "Erreur lors de la suppression de l'utilisateur." });
+  }
+});
+
+// CRUD EQUIPEMENT
+
+app.get("/equipements", async (req, res) => {
+  try {
+    const equipements = await prisma.equipement.findMany();
+    res.json(equipements);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des équipements." });
+  }
+});
+
+// Créer un nouvel équipement
+app.post("/equipements", async (req, res) => {
+  const { nom, type, quantite, duree, image, Id_Utilisateur } = req.body;
+  try {
+    const newEquipement = await prisma.equipement.create({
+      data: {
+        nom,
+        type,
+        quantite,
+        duree,
+        image,
+        Id_Utilisateur,
+      },
+    });
+    res.status(201).json(newEquipement);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la création de l'équipement." });
+  }
+});
+
+// Mettre à jour un équipement
+app.put("/equipements/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nom, type, quantite, duree, image, Id_Utilisateur } = req.body;
+  try {
+    const updatedEquipement = await prisma.equipement.update({
+      where: { Id_Equipement: parseInt(id) },
+      data: {
+        nom,
+        type,
+        quantite,
+        duree,
+        image,
+        Id_Utilisateur,
+      },
+    });
+    res.json(updatedEquipement);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de l'équipement." });
+  }
+});
+
+// Supprimer un équipement
+app.delete("/equipements/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.equipement.delete({
+      where: { Id_Equipement: parseInt(id) },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de l'équipement." });
+  }
+});
+
+// CRUD COURS
+
+// Récupérer tous les cours
+app.get("/cours", async (req, res) => {
+  try {
+    const cours = await prisma.cours.findMany();
+    res.json(cours);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des cours." });
+  }
+});
+
+// Créer un nouveau cours
+app.post("/cours", async (req, res) => {
+  const {
+    nom,
+    interventeur,
+    description,
+    duree,
+    places,
+    horaire,
+    image,
+    Id_Salle,
+  } = req.body;
+
+  try {
+    console.log(req.body);
+
+    // Vérification si la salle existe
+    const salle = await prisma.salle.findUnique({
+      where: { Id_Salle: parseInt(Id_Salle) },
+    });
+
+    if (!salle) {
+      return res
+        .status(400)
+        .json({ message: "Salle non trouvée avec cet ID." });
+    }
+
+    // Création du cours si la salle existe
+    const newCours = await prisma.cours.create({
+      data: {
+        nom,
+        interventeur,
+        description,
+        duree,
+        places: parseInt(places),
+        horaire: new Date(horaire),
+        image,
+        Id_Salle: parseInt(Id_Salle),
+      },
+    });
+
+    res.status(201).json(newCours);
+  } catch (error) {
+    console.error(error);
+    console.log(req.body);
+    res.status(500).json({ message: "Erreur lors de la création du cours." });
+  }
+});
+
+// Mettre à jour un cours
+app.put("/cours/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    nom,
+    interventeur,
+    description,
+    duree,
+    places,
+    horaire,
+    dateCours,
+    image,
+    Id_Salle,
+  } = req.body;
+  try {
+    const updatedCours = await prisma.cours.update({
+      where: { Id_Cours: parseInt(id) },
+      data: {
+        nom,
+        interventeur,
+        description,
+        duree,
+        places,
+        horaire: new Date(horaire),
+        dateCours,
+        image,
+        Id_Salle: parseInt(Id_Salle),
+      },
+    });
+    res.json(updatedCours);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour du cours." });
+  }
+});
+
+// Supprimer un cours
+app.delete("/cours/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.cours.delete({
+      where: { Id_Cours: parseInt(id) },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression du cours." });
+  }
+});
+
+// CRUD EVENEMENTS
+
+// Récupérer tous les événements
+app.get("/evenements", async (req, res) => {
+  try {
+    const evenements = await prisma.evenement.findMany();
+    res.json(evenements);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des événements." });
+  }
+});
+
+// Créer un nouvel événement
+app.post("/evenements", async (req, res) => {
+  const {
+    nom,
+    description,
+    places,
+    duree,
+    dateHeureEvenement,
+    image,
+    Id_Salle,
+  } = req.body;
+  try {
+    const newEvenement = await prisma.evenement.create({
+      data: {
+        nom,
+        description,
+        places: parseInt(places),
+        duree,
+        dateHeureEvenement: new Date(dateHeureEvenement),
+        image,
+        Id_Salle: parseInt(Id_Salle),
+      },
+    });
+    res.status(201).json(newEvenement);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la création de l'événement." });
+  }
+});
+
+// Mettre à jour un événement
+app.put("/evenements/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    nom,
+    description,
+    places,
+    duree,
+    dateHeureEvenement,
+    image,
+    Id_Salle,
+  } = req.body;
+  try {
+    const updatedEvenement = await prisma.evenement.update({
+      where: { Id_Evenement: parseInt(id) },
+      data: {
+        nom,
+        description,
+        places: parseInt(places),
+        duree,
+        dateHeureEvenement: new Date(dateHeureEvenement),
+        image,
+        Id_Salle: parseInt(Id_Salle),
+      },
+    });
+    res.json(updatedEvenement);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de l'événement." });
+  }
+});
+
+// Supprimer un événement
+app.delete("/evenements/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.evenement.delete({
+      where: { Id_Evenement: parseInt(id) },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de l'événement." });
+  }
+});
+
+app.get("/salles", async (req, res) => {
+  try {
+    const salles = await prisma.salle.findMany();
+    res.json(salles);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des événements." });
+  }
+});
+
 // Démarrage du serveur
 app.listen(port, () => {
   console.log(`Backend en écoute sur http://localhost:${port}`);

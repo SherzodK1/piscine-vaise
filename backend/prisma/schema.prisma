@@ -30,7 +30,7 @@ model cours {
   dateCours      DateTime? @db.Date
   Id_Salle       Int       @unique(map: "Id_Salle")
   Id_Utilisateur Int?
-  image          Bytes?
+  image          String?
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
@@ -52,7 +52,7 @@ model equipement {
   duree         Decimal
   createdAt     DateTime @default(now())
   id_Equipement Int      @id @default(autoincrement())
-  image         Bytes?
+  image         String?
   quantite      Int
 }
 
@@ -78,7 +78,7 @@ model evenement {
   dateHeureEvenement DateTime? @db.Date
   Id_Salle           Int       @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
-  image              Bytes?
+  image              String?
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
@@ -128,7 +128,7 @@ model utilisateur {
   adresseMail     String?  @unique(map: "adresseMail") @db.VarChar(50)
   motDePasse      String?  @db.VarChar(256)
   numeroTelephone String?  @db.VarChar(50)
-  image           Bytes?
+  image           String?
 }
 
 model contact {
