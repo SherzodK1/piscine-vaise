@@ -4,7 +4,7 @@
     <v-main>
       <!-- Section de bienvenue -->
       <v-container fluid class="my-8 py-12 bg-blue-darken-4">
-        <h2 class="text-center white--text mb-8 text-h4">BIENVENUE JEAN-MAURICE SIMEONE</h2>
+        <h2 class="text-center white--text mb-8 text-h4 text-uppercase">Bienvenue {{ userProfile?.nom || "Nom indisponible" }}</h2>
       </v-container>
 
       <!-- Section Profil -->
@@ -12,23 +12,22 @@
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="6">
             <v-card elevation="2" class="pa-6">
-              <v-row>
-                <!-- Photo de Profil -->
-                <v-col cols="12" sm="4">
-                  <v-avatar size="150">
-                    <img
-                      src="https://source.unsplash.com/featured/?person"
-                      alt="Photo de profil Jean-Maurice Simeone"
-                    />
-                  </v-avatar>
-                </v-col>
-                <!-- Informations Profil -->
+              <v-row>              
+                <!-- Informations Profil -->              
+                
                 <v-col cols="12" sm="8" class="d-flex flex-column justify-center">
-                  <h3>Jean-Maurice Simeone</h3>
-                  <p>Télephone : All. Pierre de Coubertin, 69007 Lyon</p>
-                  <p>Abonnement : Premium</p>
-                  <p>Email : mail</p>
-                  <p>Mot de passe </p>
+                  <!--aller chercher a la db le nom de l'utilisateur si est connecté pour l'afficher-->
+                  <h3 class="pb-5"> {{ userProfile?.nom || "Nom indisponible" }} </h3>
+                  
+                  <v-form v-if="userProfile">
+                    <v-text-field v-model="userProfile.email" label="Email"></v-text-field>
+                    <v-text-field v-model="userProfile.numeroTelephone" label="Téléphone"></v-text-field>
+                    <v-text-field v-model="newPassword" label="Nouveau mot de passe" type="password"></v-text-field>
+                    <v-btn color="primary" @click="updateProfile()">Mettre à jour</v-btn>
+                  </v-form>
+                  <!--<div v-if="userProfile">-->
+                    <p class="pt-4">Forfait : </p>
+                <!-- </div> -->
                 </v-col>
               </v-row>
             </v-card>
@@ -72,13 +71,13 @@
       </v-container>
 
       <!-- Section Actions -->
+    
       <v-container>
-        <v-row justify="center">
-          <v-btn color="primary" class="mx-2">Accueil</v-btn>
-          <v-btn color="success" class="mx-2">Voir mes réservations</v-btn>
-          <v-btn outlined color="error" class="mx-2">Gérer mon profil/abonnement</v-btn>
-        </v-row>
+        <h2 class="text-center">Mes Reservations</h2>              
+        
       </v-container>
+      
+      <v-btn  to="/accueil" color="primary" class="mx-2 justify-center">Accueil</v-btn>
     </v-main>
 
     <!-- Footer -->
@@ -98,13 +97,38 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get('/profil');
+      const response = await axios.get('http://localhost:3000/profil', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
       this.userProfile = response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération du profil:', error);
     }
   },
+  methods: {
+    
+  async updateProfile() {
+    try {
+      await axios.put('http://localhost:3000/profil', {
+        
+        email: this.userProfile.email,
+        numeroTelephone: this.userProfile.numeroTelephone,
+        motDePasse: this.newPassword,
+        
+      },
+      {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
+      alert('Profil mis à jour avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error);
+    }
+  }, 
+  
+  }
 };
+
+  
 
 </script>
 

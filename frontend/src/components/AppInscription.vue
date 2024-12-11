@@ -33,7 +33,7 @@
                                     <v-text-field v-model="email" :readonly="loading" :rules="[required, emailRule]"
                                         class="text-black" bg-color="white" label="Email" clearable></v-text-field>
                                     <v-text-field v-model="password" :readonly="loading" :rules="[required, passwordRule]"
-                                        class="text-white" bg-color="white" label="Mot de passe"
+                                        class="text-white" bg-color="white" label="Mot de passe" type="password"
                                         placeholder="Entrez votre mot de passe" clearable></v-text-field>
                                     <v-btn size="large" class="text-h6 font-weight-bold mb-6" text="S'inscrire"
                                         type="submit" color="#2D3648" variant="elevated" @click="isActive.value = false"

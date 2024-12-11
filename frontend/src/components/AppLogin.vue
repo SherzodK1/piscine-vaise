@@ -71,6 +71,7 @@ import { login } from './login.js'
                 class="text-white"
                 bg-color="white"
                 label="Mot de passe"
+                type="password"
                 placeholder="Entrez votre mot de passe"
                 clearable
               ></v-text-field>

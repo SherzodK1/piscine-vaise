@@ -87,7 +87,7 @@ model forfait {
   Id_Forfait  Int      @id @default(autoincrement())
   nom         String?  @db.VarChar(50)
   prix        Decimal? @db.Decimal(15, 2)
-  description String?  @db.VarChar(50)
+  description String?  @db.Text
 }
 
 model paiement {
@@ -129,4 +129,12 @@ model utilisateur {
   motDePasse      String?  @db.VarChar(256)
   numeroTelephone String?  @db.VarChar(50)
   image           Bytes?
+}
+
+model contact {
+  Id_Contact  Int       @id @default(autoincrement())
+  nom         String?   @db.VarChar(50)
+  mail        String?   @db.VarChar(50)
+  message     String?   @db.Text
+  createDate  DateTime? @db.DateTime(0)
 }
