@@ -1,23 +1,24 @@
 <script setup>
-import { login } from './login.js'
+import { login } from "./login.js";
 </script>
 
 <template>
   <v-app-bar app color="#24292D">
-    <v-img height="60" src="@/assets/logoAtlantis.svg" />
+    <a href="/accueil" class="logo">
+      <img height="60" src="@/assets/logoAtlantis.svg" alt="Logo Atlantis" />
+    </a>
     <v-spacer></v-spacer>
     <v-btn to="/forfait">Forfait</v-btn>
     <v-btn to="/equipements">Equipements</v-btn>
     <v-btn to="/cours">Cours</v-btn>
     <v-btn to="/evenements">Evénements</v-btn>
-    <v-btn @click="handleReservation" >Réservation</v-btn>
-    <AppLogin/>
+    <v-btn @click="handleReservation">Réservation</v-btn>
+    <AppLogin />
   </v-app-bar>
 </template>
 <script>
-
 //import AppLogin from './AppLogin.vue';
-import AppLogin from './AppLogin.vue';
+import AppLogin from "./AppLogin.vue";
 
 export default {
   components: { AppLogin },
@@ -29,7 +30,7 @@ export default {
       if (!login.authenticated) {
         this.showLoginPopup = true; // Mostrar popup de login
       } else {
-        this.$router.push('/reservationSalle'); // Redirigir si está autenticado
+        this.$router.push("/reservationSalle"); // Redirigir si está autenticado
       }
     },
   },

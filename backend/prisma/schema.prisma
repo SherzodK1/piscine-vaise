@@ -51,7 +51,7 @@ model equipement {
   type          String
   duree         Decimal
   createdAt     DateTime @default(now())
-  id_Equipement Int      @id @default(autoincrement())
+  Id_Equipement Int      @id @default(autoincrement())
   image         String?
   quantite      Int
 }
