@@ -21,9 +21,7 @@
 
       <!-- Section Cours -->
       <v-container fluid class="my-8 bg-blue-darken-4 py-12">
-        <h2 class="text-center white--text mb-8 text-h4">
-          Cours disponibles
-        </h2>
+        <h2 class="text-center white--text mb-8 text-h4">Cours disponibles</h2>
 
         <!-- Chargement ou Erreur -->
         <div v-if="loading" class="text-center white--text">
@@ -44,11 +42,7 @@
             class="d-flex justify-center mb-6"
           >
             <v-card class="text-center rounded-lg" outlined>
-              <v-img
-                :src="getImageUrl(cour.image)"
-                height="200"
-                cover
-              ></v-img>
+              <v-img :src="getImageUrl(cour.image)" height="200" cover></v-img>
               <v-card-title class="text-h5">{{ cour.nom }}</v-card-title>
               <v-card-text>
                 <p>Capacité : {{ cour.places }}</p>
@@ -69,19 +63,24 @@
         <!-- Dialog de détails -->
         <v-dialog v-model="dialog" max-width="500">
           <v-card>
-            <v-img :src="getImageUrl(selectedCour?.image)" height="300" cover></v-img>
+            <v-img
+              :src="getImageUrl(selectedCour?.image)"
+              height="300"
+              cover
+            ></v-img>
             <v-card-title class="text-h5">{{ selectedCour?.nom }}</v-card-title>
             <v-card-text>
-              <p><strong>Type :</strong> {{ selectedCour?.type }}</p>
-              <p><strong>Capacité :</strong> {{ selectedCour?.places }}</p>
+              <p><strong>Places :</strong> {{ selectedCour?.places }}</p>
               <p><strong>Durée :</strong> {{ selectedCour?.duree }} heures</p>
-              <p><strong>Lieu :</strong> {{ selectedCour?.Id_Salle }}</p>
-              <p><strong>Intervenant :</strong> {{ selectedCour?.interventeur }}</p>
+              <p><strong>Salle :</strong> {{ selectedCour?.Id_Salle }}</p>
+              <p>
+                <strong>Intervenant :</strong> {{ selectedCour?.interventeur }}
+              </p>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="dialog = false">Fermer</v-btn>
-              <v-btn text color="primary" @click="reserver(selectedCour)">Réserver</v-btn>
+              <v-btn text color="primary" @click="reserver()">Réserver</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -104,7 +103,12 @@ export default {
   },
   data() {
     return {
+      user: [],
       cours: [],
+      inscritption: {
+        Id_Cours: null,
+        Id_Utilisateur: null, // Remplacer par l'id de l'utilisateur connecté
+      },
       loading: true,
       error: null,
       dialog: false,
@@ -131,12 +135,18 @@ export default {
       this.selectedCour = cour;
       this.dialog = true;
     },
-    reserver(cour) {
-      if (cour?.id_Cours) {
-        this.$router.push({
-          name: "ReservationPage",
-          query: { idCours: cour.id_Cours },
-        });
+    async reserver() {
+      this.user = JSON.parse(localStorage.getItem("user"));
+      this.inscritption.Id_Cours = this.selectedCour.Id_Cours;
+      this.inscritption.Id_Utilisateur = this.user.Id_Utilisateur;
+      console.log(this.selectedCour);
+      console.log(this.inscritption.Id_Cours);
+      console.log(this.inscritption.Id_Utilisateur);
+      try {
+        await api.inscriptionCours(this.inscritption);
+        alert("Vous êtes maintenant inscrit à ce cours !");
+      } catch (err) {
+        this.error = err.message;
       }
     },
   },

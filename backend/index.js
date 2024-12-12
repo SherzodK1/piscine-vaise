@@ -742,7 +742,7 @@ app.get("/espaces", async (req, res) => {
 
 // Créer un nouveau espace
 app.post("/espaces", async (req, res) => {
-  const { nom, duree, places, prix } = req.body;
+  const { nom, duree, places, prix, Id_Utilisateur } = req.body;
   try {
     console.log(req.body);
 
@@ -753,6 +753,7 @@ app.post("/espaces", async (req, res) => {
         duree: parseInt(duree),
         places: parseInt(places),
         prix,
+        Id_Utilisateur: parseInt(Id_Utilisateur),
       },
     });
 
@@ -766,7 +767,7 @@ app.post("/espaces", async (req, res) => {
   }
 });
 
-// Mettre à jour un cours
+// Mettre à jour un espace
 app.put("/espaces/:id", async (req, res) => {
   const { id } = req.params;
   const { nom, duree, places, prix } = req.body;
@@ -789,7 +790,7 @@ app.put("/espaces/:id", async (req, res) => {
   }
 });
 
-// Supprimer un cours
+// Supprimer un espace
 app.delete("/espaces/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -802,6 +803,50 @@ app.delete("/espaces/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Erreur lors de la suppression de l'espace." });
+  }
+});
+
+app.post("/inscrire", async (req, res) => {
+  const { Id_Cours, Id_Utilisateur } = req.body;
+
+  if (!Id_Cours || !Id_Utilisateur) {
+    return res.status(400).json({ error: "Données invalides" });
+  }
+
+  try {
+    console.log(req.body);
+    const inscription = await prisma.s_inscrire.create({
+      data: {
+        Id_Cours: parseInt(Id_Cours),
+        Id_Utilisateur: parseInt(Id_Utilisateur),
+      },
+    });
+    res.status(201).json({ message: "Inscription réussie", inscription });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur lors de l'inscription" });
+  }
+});
+
+app.post("/enregistre", async (req, res) => {
+  const { Id_Evenement, Id_Utilisateur } = req.body;
+
+  if (!Id_Evenement || !Id_Utilisateur) {
+    return res.status(400).json({ error: "Données invalides" });
+  }
+
+  try {
+    console.log(req.body);
+    const enregistrement = await prisma.s_enregistrer.create({
+      data: {
+        Id_Evenement: parseInt(Id_Evenement),
+        Id_Utilisateur: parseInt(Id_Utilisateur),
+      },
+    });
+    res.status(201).json({ message: "Inscription réussie", enregistrement });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur lors de l'enregistrment" });
   }
 });
 

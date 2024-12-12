@@ -21,6 +21,7 @@ export default {
   getEvenementById(id) {
     return api.get(`/evenement/${id}`);
   },
+  enregistrementEvenement(data) {
+    return api.post("/enregistre", data);
+  },
 };
-
-

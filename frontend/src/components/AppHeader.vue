@@ -9,9 +9,9 @@ import { login } from "./login.js";
     </a>
     <v-spacer></v-spacer>
     <v-btn to="/forfait">Forfait</v-btn>
-    <v-btn to="/equipements">Equipements</v-btn>
+    <v-btn to="/equipement">Equipement</v-btn>
     <v-btn to="/cours">Cours</v-btn>
-    <v-btn to="/evenements">Evénements</v-btn>
+    <v-btn to="/evenement">Evénement</v-btn>
     <v-btn @click="handleReservation">Réservation</v-btn>
     <v-btn v-if="isAdmin" to="/admin">Admin</v-btn>
     <AppLogin />

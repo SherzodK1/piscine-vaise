@@ -1,11 +1,10 @@
 <template>
   <div>
-    
     <AppHeader />
     <v-main>
       <!-- Section Hero -->
       <v-img
-        src="/image/gims.jpg"
+        src="https://picsum.photos/400/400?random=4"
         max-height="600px"
         cover
         class="d-flex justify-start align-center mb-14"
@@ -15,7 +14,8 @@
         >
           <h1 class="text-h3 white--text">Nos Événements</h1>
           <p class="white--text ma-2">
-            Découvrez nos événements à venir et participez à des moments inoubliables.
+            Découvrez nos événements à venir et participez à des moments
+            inoubliables.
           </p>
         </v-container>
       </v-img>
@@ -46,13 +46,13 @@
           >
             <v-card class="text-center rounded-lg" outlined>
               <v-img
-                src="/image/big black m.jpeg"
+                src="https://picsum.photos/400/400?random=5"
                 height="200"
                 cover
               ></v-img>
               <v-card-title class="text-h5">{{ evenement.nom }}</v-card-title>
               <v-card-text>
-                <p>Date : {{ evenement.dateEvenement }}</p>
+                <p>Date : {{ evenement.dateHeureEvenement }}</p>
                 <p>Places : {{ evenement.places }} personnes</p>
               </v-card-text>
               <v-btn @click="openDialog(evenement)" color="primary">
@@ -66,23 +66,35 @@
         <div v-else class="text-center white--text">
           Aucun événement disponible pour le moment.
         </div>
-        
+
         <!-- Dialog de détails -->
         <v-dialog v-model="dialog" max-width="500">
           <v-card>
-            <v-card-title class="text-h5">{{ selectedEvenement?.nom }}</v-card-title>
+            <v-card-title class="text-h5">{{
+              selectedEvenement?.nom
+            }}</v-card-title>
             <v-card-text>
-              <p><strong>Description :</strong> {{ selectedEvenement?.description }}</p>
-              <p><strong>Lieu :</strong> {{ selectedEvenement?.lieu }}</p>
-              <p><strong>Intervenant :</strong> {{ selectedEvenement?.Id_Utilisateur }}</p>
-              <p><strong>Date :</strong> {{ selectedEvenement?.dateEvenement }}</p>
-              <p><strong>Durée :</strong> {{ selectedEvenement?.duree }} heures</p>
-              <p><strong>Places :</strong> {{ selectedEvenement?.places }} personnes</p>
+              <p>
+                <strong>Description :</strong>
+                {{ selectedEvenement?.description }}
+              </p>
+              <p><strong>Lieu :</strong> {{ selectedEvenement?.Id_Salle }}</p>
+              <p>
+                <strong>Date :</strong>
+                {{ selectedEvenement?.dateHeureEvenement }}
+              </p>
+              <p>
+                <strong>Durée :</strong> {{ selectedEvenement?.duree }} heures
+              </p>
+              <p>
+                <strong>Places :</strong>
+                {{ selectedEvenement?.places }} personnes
+              </p>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="dialog = false">Fermer</v-btn>
-              <v-btn text color="primary" @click="confirmReservation">Réserver</v-btn>
+              <v-btn text color="primary" @click="reserver()">Réserver</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -90,14 +102,20 @@
         <!-- Dialog de confirmation -->
         <v-dialog v-model="confirmationDialog" max-width="500">
           <v-card>
-            <v-card-title class="text-h5">Confirmation de réservation</v-card-title>
+            <v-card-title class="text-h5"
+              >Confirmation de réservation</v-card-title
+            >
             <v-card-text>
               <p>Êtes-vous sûr de vouloir réserver cet événement ?</p>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="confirmationDialog = false">Annuler</v-btn>
-              <v-btn text color="primary" @click="finalizeReservation">Oui, je réserve</v-btn>
+              <v-btn text color="primary" @click="confirmationDialog = false"
+                >Annuler</v-btn
+              >
+              <v-btn text color="primary" @click="finalizeReservation"
+                >Oui, je réserve</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -120,7 +138,12 @@ export default {
   },
   data() {
     return {
+      user: [],
       evenement: [],
+      enregistrement: {
+        Id_Evenement: null,
+        Id_Utilisateur: null, // Remplacer par l'id de l'utilisateur connecté
+      },
       loading: true,
       error: null,
       dialog: false,
@@ -129,48 +152,60 @@ export default {
     };
   },
   methods: {
-  async fetchEvenements() {
-    try {
-      const response = await api.getEvenement();
-      this.evenements = response.data;
-    } catch (err) {
-      this.error = err.message;
-    } finally {
-      this.loading = false;
-    }
-  },
-  openDialog(evenement) {
-    this.selectedEvenement = evenement;
-    this.dialog = true;
-  },
-  confirmReservation() {
-    this.confirmationDialog = true;
-  },
-  async finalizeReservation() {
-    if (this.selectedEvenement?.places > 0) {
-      // Réduire le nombre de places disponibles
-      this.selectedEvenement.places -= 1;
-
-      // Mettre à jour l'événement via l'API pour diminuer les places
+    async fetchEvenements() {
       try {
-        await api.updateEvenement(this.selectedEvenement.id_Evenement, {
-          places: this.selectedEvenement.places,
-        });
-      } catch (error) {
-        this.error = "Erreur lors de la mise à jour des places.";
+        const response = await api.getEvenement();
+        this.evenements = response.data;
+      } catch (err) {
+        this.error = err.message;
+      } finally {
+        this.loading = false;
       }
+    },
+    openDialog(evenement) {
+      this.selectedEvenement = evenement;
+      this.dialog = true;
+    },
+    async reserver() {
+      this.user = JSON.parse(localStorage.getItem("user"));
+      this.enregistrement.Id_Evenement = this.selectedEvenement.Id_Evenement;
+      this.enregistrement.Id_Utilisateur = this.user.Id_Utilisateur;
+      console.log(this.selectedEvenement);
+      console.log(this.enregistrement.Id_Evenement);
+      console.log(this.enregistrement.Id_Utilisateur);
+      try {
+        await api.enregistrementEvenement(this.enregistrement);
+        alert("Vous êtes maintenant inscrit à cet événement !");
+      } catch (err) {
+        alert("Il n'y a plus de places disponibles pour cet événement.");
+        this.error = err.message;
+      }
+    },
+    async finalizeReservation() {
+      if (this.selectedEvenement?.places > 0) {
+        // Réduire le nombre de places disponibles
+        this.selectedEvenement.places -= 1;
 
-      // Fermer les dialogues
-      this.confirmationDialog = false;
-      this.dialog = false;
+        // Mettre à jour l'événement via l'API pour diminuer les places
+        try {
+          await api.updateEvenement(this.selectedEvenement.Id_Evenement, {
+            places: this.selectedEvenement.places,
+          });
+        } catch (error) {
+          this.error = "Erreur lors de la mise à jour des places.";
+        }
 
-      // Afficher un message de succès
-      alert("Vous êtes maintenant inscrit à cet événement !");
-    } else {
-      alert("Il n'y a plus de places disponibles pour cet événement.");
-    }
+        // Fermer les dialogues
+        this.confirmationDialog = false;
+        this.dialog = false;
+
+        // Afficher un message de succès
+        alert("Vous êtes maintenant inscrit à cet événement !");
+      } else {
+        alert("Il n'y a plus de places disponibles pour cet événement.");
+      }
+    },
   },
-},
   async created() {
     await this.fetchEvenements();
   },

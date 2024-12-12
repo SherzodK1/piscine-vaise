@@ -108,6 +108,7 @@ export default {
         { text: "Duree", value: "duree" },
         { text: "Places", value: "places" },
         { text: "Prix", value: "prix" },
+        { text: "Utilisateur", value: "Id_Utilisateur" },
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ],
       rules: {

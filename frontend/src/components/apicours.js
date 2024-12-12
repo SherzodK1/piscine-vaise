@@ -23,4 +23,8 @@ export default {
   getCoursById(id) {
     return api.get(`/cours/${id}`);
   },
+
+  inscriptionCours(data) {
+    return api.post("/inscrire", data);
+  },
 };
