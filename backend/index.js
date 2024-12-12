@@ -194,39 +194,39 @@ app.get("/espace", authenticateToken, async (req, res) => {
   }
 });
 
-// Récupérer tous les evenements réservés par l'utilisateur
-// app.get("/evenement", authenticateToken, async (req, res) => {
-//   try {
-//     // Récupérer les evenements réservés par l'utilisateur
-//     const evenements = await prisma.evenement.findMany({
-//       where: { Id_Utilisateur: req.utilisateur.utilisateurId },
-//     });
+//Récupérer tous les evenements réservés par l'utilisateur
+app.get("/evenement", authenticateToken, async (req, res) => {
+  try {
+    // Récupérer les evenements réservés par l'utilisateur
+    const evenements = await prisma.evenement.findMany({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+    });
 
-//     res.json(evenements);
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des evenements :", error);
-//     res.status(500).json({
-//       message: "Erreur interne lors de la récupération des evenements.",
-//     });
-//   }
-// });
+    res.json(evenements);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des evenements :", error);
+    res.status(500).json({
+      message: "Erreur interne lors de la récupération des evenements.",
+    });
+  }
+});
 
-// // Récupérer tous les cours réservés par l'utilisateur
-// app.get("/cours", authenticateToken, async (req, res) => {
-//   try {
-//     // Récupérer les cours réservés par l'utilisateur
-//     const cours = await prisma.cours.findMany({
-//       where: { Id_Utilisateur: req.utilisateur.utilisateurId },
-//     });
+// Récupérer tous les cours réservés par l'utilisateur
+app.get("/cours", authenticateToken, async (req, res) => {
+  try {
+    // Récupérer les cours réservés par l'utilisateur
+    const cours = await prisma.cours.findMany({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+    });
 
-//     res.json(cours);
-//   } catch (error) {
-//     console.error("Erreur lors de la récupération des cours :", error);
-//     res
-//       .status(500)
-//       .json({ message: "Erreur interne lors de la récupération des cours." });
-//   }
-// });
+    res.json(cours);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des cours :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur interne lors de la récupération des cours." });
+  }
+});
 
 // Récupérer tous les equipements réservés par l'utilisateur
 app.get("/equipements", authenticateToken, async (req, res) => {
