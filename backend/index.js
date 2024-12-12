@@ -99,8 +99,9 @@ app.post("/login", async (req, res) => {
       JWT_SECRET,
       { expiresIn: "1h" }
     );
-
-    res.status(200).json({ message: "Connexion avec succes", token });
+    res
+      .status(200)
+      .json({ message: "Connexion avec succes", token, utilisateur });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Il y a eu un erreur pendant la connexion" });

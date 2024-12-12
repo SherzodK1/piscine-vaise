@@ -13,6 +13,7 @@ import { login } from "./login.js";
     <v-btn to="/cours">Cours</v-btn>
     <v-btn to="/evenements">Evénements</v-btn>
     <v-btn @click="handleReservation">Réservation</v-btn>
+    <v-btn v-if="isAdmin" to="/admin">Admin</v-btn>
     <AppLogin />
   </v-app-bar>
 </template>
@@ -24,7 +25,12 @@ export default {
   components: { AppLogin },
   data: () => ({
     showLoginPopup: false, // Controlar la visibilidad del popup
+    isAdmin: false,
+    user: [],
   }),
+  async created() {
+    await this.ShowAdmin();
+  },
   methods: {
     handleReservation() {
       if (!login.authenticated) {
@@ -32,6 +38,11 @@ export default {
       } else {
         this.$router.push("/reservationSalle"); // Redirigir si está autenticado
       }
+    },
+    async ShowAdmin() {
+      this.user = JSON.parse(localStorage.getItem("user"));
+      this.isAdmin = this.user.estAdmin;
+      console.log(this.user);
     },
   },
 };
