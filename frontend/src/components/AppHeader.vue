@@ -18,7 +18,7 @@ import { login } from "./login.js";
   </v-app-bar>
 </template>
 <script>
-//import AppLogin from './AppLogin.vue';
+
 import AppLogin from "./AppLogin.vue";
 
 export default {
@@ -26,23 +26,21 @@ export default {
   data: () => ({
     showLoginPopup: false, // Controlar la visibilidad del popup
     isAdmin: false,
-    user: [],
+    user: null,
   }),
   async created() {
-    await this.ShowAdmin();
+     
+      
+      this.isAdmin = login.user.estAdmin;
+    
   },
   methods: {
     handleReservation() {
       if (!login.authenticated) {
         this.showLoginPopup = true; // Mostrar popup de login
       } else {
-        this.$router.push("/reservationSalle"); // Redirigir si está autenticado
+        this.$router.push("/reservationSalle"); // Redirigir si está autentificado
       }
-    },
-    async ShowAdmin() {
-      this.user = JSON.parse(localStorage.getItem("user"));
-      this.isAdmin = this.user.estAdmin;
-      console.log(this.user);
     },
   },
 };

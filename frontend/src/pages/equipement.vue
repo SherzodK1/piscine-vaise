@@ -77,7 +77,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="dialog = false">Fermer</v-btn>
-              <v-btn text color="primary" @click="reserver(selectedEquipement)">Réserver</v-btn>
+              <v-btn text color="primary" @click="reserver">Réserver</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -127,13 +127,16 @@ export default {
       this.selectedEquipement = equipement;
       this.dialog = true;
     },
-    reserver(equipement) {
-      if (equipement?.id_Equipement) {
-        this.$router.push({
-          name: "ReservationPage",
-          query: { idEquipement: equipement.id_Equipement },
-        });
+    async reserver() {
+  
+        try {
+          await api.enregistrementEquipement(this.selectedEquipement);
+          alert("Vous êtes maintenant inscrit à cet equipement !");
+        } catch (err) {
+        alert("Il n'y a plus de places disponibles pour cet equipement.");
+        this.error = err.message;
       }
+      
     },
   },
   async created() {

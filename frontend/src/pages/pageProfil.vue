@@ -103,8 +103,8 @@
       <v-card-text>
         <v-data-table 
           class="elevation-1 "        
-          :items="ReservationEvenement"
-          :headers="EvenementHeader"
+          :items="reservationEvenement"
+          :headers="evenementHeader"
           item-value="Id_Evenement"          
           dense
           :loading="loading"
@@ -118,8 +118,8 @@
       <v-card-text>
         <v-data-table 
           class="elevation-1 "        
-          :items="ReservationCours"
-          :headers="CoursHeader"
+          :items="reservationCours"
+          :headers="coursHeader"
           item-value="Id_Cours"          
           dense
           :loading="loading"
@@ -133,8 +133,8 @@
       <v-card-text>
         <v-data-table 
           class="elevation-1 "        
-          :items="ReservationEquipements"
-          :headers="EquipementsHeader"
+          :items="reservationEquipements"
+          :headers="equipementsHeader"
           item-value="Id_Equipements"          
           dense
           :loading="loading"
@@ -173,29 +173,29 @@ export default {
         { title: "Date", value: "date" },
         { title: "Prix", value: "prix" },
       ],
-      ReservationEvenement:[],
-      EvenementHeader:[
+      reservationEvenement:[],
+      evenementHeader:[
         { title: "Nom", value: "nom" },
         { title: "Durée", value: "duree" },
-        { title: "Date et Heure", value: "date" },
-        { title: "Salle", value: "salle" },
+        { title: "Date et Heure", value: "dateHeureEvenement" },
+        { title: "Salle", value: "Id_Salle" },
       ],
-      ReservationCours:[],
-      CoursHeader:[
+      reservationCours:[],
+      coursHeader:[
         { title: "Nom", value: "nom" },
         { title: "Duree", value:"duree"},
         { title: "Interventeur", value: "interventeur" },
-        { title: "Date et Heure", value: "date" },
+        { title: "Date", value: "dateCours" },
         { title: "Horaire", value: "horaire"},
-        { title: "Salle", value: "salle" },
+        { title: "Salle", value: "Id_Salle" },
       ],
-      ReservationEquipements:[],
-      EquipementsHeader:[
+      reservationEquipements:[],
+      equipementsHeader:[
         { title: "Nom", value: "nom" },
-        { title: "Duree", value:"duree"},
+        { title: "Duree", value:"duree"},//prendre la duree de la table empreinter
         { title: "Type", value: "type" },
-        { title: "Date et Heure", value: "date" },
-        { title: "Quantite", value: "quantite"}
+        { title: "Quantite", value: "quantite"},
+        { title: "Date et Heure", value: "dateEmpreint" },
       ]
     };
   },
@@ -245,7 +245,7 @@ export default {
             headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
           });
 
-        this.ReservationEvenement = response.data;
+        this.reservationEvenement = response.data;
       } catch (err) {
         this.error = err.message;
       } finally {
@@ -279,7 +279,17 @@ export default {
             headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
           });
 
-        this.ReservationEquipements = response.data;
+        this.reservationEquipements = response.data.map(
+        (empreinter) => {
+          return {
+            nom: empreinter.equipement.nom,
+            quantite: empreinter.equipement.quantite,
+            duree: empreinter.duree,
+            dateEmpreint: empreinter.dateEmpreint,
+            type: empreinter.equipement.type
+            }
+        }
+      );
       } catch (err) {
         this.error = err.message;
       } finally {

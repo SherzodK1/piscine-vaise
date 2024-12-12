@@ -146,7 +146,7 @@ export default {
         await api.inscriptionCours(this.inscritption);
         alert("Vous êtes maintenant inscrit à ce cours !");
       } catch (err) {
-        this.error = err.message;
+        alert(err.response.data.error);
       }
     },
   },

@@ -10,7 +10,7 @@ export default {
    * @returns {Promise} Liste des équipements.
    */
   getEquipement() {
-    return api.get("/equipement");
+    return api.get("/all-equipement");
   },
 
   /**
@@ -20,6 +20,12 @@ export default {
    */
   getEquipementById(id) {
     return api.get(`/equipement/${id}`);
+  },
+
+  enregistrementEquipement(data) {
+    return api.post("/equipement", data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },  
+    });
   },
 
   /**

@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const login = reactive({
   authenticated: !!localStorage.getItem("jwt"), // Verificar si ya existe un token almacenado
+  user: JSON.parse(localStorage.getItem("user")),
   async login(email, password) {
     try {
       const response = await axios.post("http://localhost:3000/login", {
@@ -14,6 +15,7 @@ export const login = reactive({
         localStorage.setItem("jwt", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.utilisateur));
         this.authenticated = true;
+        this.user = response.data.utilisateur;
       }
     } catch (error) {
       console.error("Login error:", error.response || error);
