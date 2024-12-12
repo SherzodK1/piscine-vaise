@@ -1,102 +1,204 @@
 <template>
   <div>
-  <AppHeader/>
-    <main>
-      <section class="texte-section">
-        <h2>
-          Vous souhaitez réserver une salle, n'hésitez pas a remplir ce
-          formulaire
+    <AppHeader />
+    <v-main>
+      <!-- Section Hero -->
+      <v-img
+        src="https://picsum.photos/400/400?random=6"
+        max-height="600px"
+        cover
+        class="d-flex justify-start align-center mb-14"
+      >
+        <v-container
+          class="bg-grey-darken-4 text-center d-flex flex-column align-center justify-start rounded-pill opacity-80 py-6 px-8"
+        >
+          <h1 class="text-h3 white--text">Réservation</h1>
+          <p class="white--text ma-2">
+            Réservez une espace en toute simplicité.
+          </p>
+        </v-container>
+      </v-img>
+
+      <!-- Section Formulaire -->
+      <v-container fluid class="my-8 bg-blue-darken-4 py-12" >
+        <h2 class="text-center white--text mb-8 text-h4">
+          Formulaire de réservation
         </h2>
-      </section>
-      <form>
-        <br><label for="fname">Nom </label><br>
-        <input type="text" id="nom" name="Nom" />
-        <br><label for="lname">Description</label><br>
-        <input type="text" id="description" name="Description" />
-        <br><label for="fname">Date</label><br>
-        <input type="text" id="date" name="Date" />
-        <br><label for="lname">Durée</label><br>
-        <input type="text" id="duree" name="Durée" />
-        <br><label for="fname">Nombre de personnes</label><br>
-        <input type="text" id="nombre de personnes" name="Nombre de personnes" />
-        <br><label for="lname">Salle</label><br>
-        <input type="text" id="salle" name="Salle" />
-        <h2>Total de ... €</h2>
-      </form>
-      <section class="reservation-section">
-        <button>Soumettre</button>
-      </section>
-    </main>
-    <AppFooter/>
+
+        <v-form @submit.prevent="submitReservation">
+          <v-row>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="nom"
+                label="Nom"
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="typeEvenement"
+                label="Type d'evenement"
+                required
+              ></v-text-field>
+            </v-col>
+            
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="duree"
+                label="Durée (en heures)"
+                type="number"
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="nombrePersonnes"
+                label="Nombre de personnes"
+                type="number"
+                required
+                class="text-white"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-date-input 
+                label="Date input" 
+                v-model="date"
+                > </v-date-input>
+            </v-col>
+
+            <v-col cols="12" sm="6" color="#24292D">                         
+            <v-text-field  v-model="prix"
+                label="Prix"
+                type="number"
+                suffix="€"
+                disabled
+                required
+              ></v-text-field>
+        
+            </v-col>
+
+
+            <v-col cols="12">
+              <v-btn type="submit" color="primary" block>
+                Reserver
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-container>
+
+      <!-- Message de confirmation -->
+      <v-dialog v-model="confirmationDialog" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Réservation confirmée</v-card-title>
+          <v-card-text>
+            Merci, votre réservation a été enregistrée avec succès.
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" text @click="confirmationDialog = false">
+              Fermer
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-main>
+    <AppFooter />
   </div>
 </template>
 
 <script>
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import axios from 'axios';
+
 export default {
-  name: "ProfilePage",
+  name: "ReservationPage",
+  components: {
+    AppHeader,
+    AppFooter,
+  },
+  data() {
+    return {
+
+      nom: "",
+      typeEvenement: "",
+      date: null,
+      duree: "1",
+      nombrePersonnes: "1",
+      prix: "5",
+      confirmationDialog: false,
+    };
+  },
+  watch: {
+    nombrePersonnes: function (value) {
+      this.prix = parseFloat(this.duree) * value * 5
+    },
+    duree: function (value) {
+      this.prix = parseInt(this.nombrePersonnes) * value * 5
+    }
+  },
+  methods: {
+
+     async submitReservation() {
+    /* try { */
+      if (this.date) {
+          this.date = new Date(this.date).toISOString();
+      }
+
+    try {
+      const response = await axios.post('http://localhost:3000/reservation-salle',
+        JSON.stringify({
+          nom: this.nom,
+          typeEvenement: this.typeEvenement,
+          date: this.date,
+          duree: this.duree,
+          nombrePersonnes: this.nombrePersonnes,
+        }),
+        {
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
+      const result = response.data;
+
+    
+      console.log("Réservation réussie :", result);
+
+      // Afficher un message de confirmation
+      this.confirmationDialog = true;
+
+      // Réinitialiser le formulaire
+      
+      this.nom = "";
+      this.typeEvenement = "";
+      this.date = null;
+      this.duree = "1";
+      this.nombrePersonnes = "1";
+      this.prix = "5";
+    
+    /* } catch (error) {
+      console.error("Erreur lors de l'envoi de la réservation :", error);
+      alert("Une erreur est survenue lors de la réservation.");
+    } */
+  } catch (error) {
+      console.error("Erreur lors de la réservation.", error);
+    }
+  },
+  },
 };
 </script>
 
 <style scoped>
-input[type="text"],
-select {
-  width: 70%;
-  padding: 10px;
-  margin: 10px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+.v-main {
+  background-color: #121212;
 }
 
-form {
-  background-color: #1475bb;
-  color: #efff;
+.v-container {
+  padding: 0 24px;
 }
 
-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #24292d;
-  color: #fff;
-  padding: 10px;
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-}
-
-nav ul li {
-  margin-right: 20px;
-}
-
-button {
-  margin-left: 10px;
-}
-
-.reservation-section {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-footer {
-  background-color: #24292d;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.social-media a {
-  margin-left: 10px;
-  color: #fff;
-  text-decoration: none;
+.v-btn {
+  margin-top: 20px;
 }
 </style>
