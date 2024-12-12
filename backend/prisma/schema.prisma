@@ -61,12 +61,12 @@ model espace {
   nom              String?  @db.VarChar(50)
   places           Int?
   duree            Decimal? @db.Decimal(15, 2)
-  prix             String?  @db.VarChar(50)
+  prix             Decimal? @db.Decimal(15, 2)
+  typeEvenement    String?  @db.VarChar(50)
+  date             DateTime? @db.Date
   Id_Utilisateur   Int?
-  Id_Utilisateur_1 Int?
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
-  @@index([Id_Utilisateur_1], map: "Id_Utilisateur_1")
 }
 
 model evenement {
@@ -137,4 +137,4 @@ model contact {
   mail        String?   @db.VarChar(50)
   message     String?   @db.Text
   createDate  DateTime? @db.DateTime(0)
-}
+} 

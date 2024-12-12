@@ -9,10 +9,8 @@ import { login } from './login.js'
         <!-- Si el usuario está autenticado -->
         <div v-if="login.authenticated">
         <v-menu offset-y>
-          <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" variant="elevated" color="#00B4E7">
-              Profil
-            </v-btn>
+          <template v-slot:activator="{ props }">        
+             <v-icon v-bind="props" color="#00B4E7">mdi-account</v-icon> 
           </template>
           <v-list class="m-2">
             <v-list-item to="/pageProfil">Profil</v-list-item>
@@ -123,6 +121,10 @@ import { login } from './login.js'
       password: null,
       loading: false,
       dialog: false,
+      icons: [
+        'mdi-account'
+        
+      ],
     }),
   
     watch: {
