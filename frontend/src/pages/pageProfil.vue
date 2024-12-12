@@ -1,9 +1,8 @@
 <template>
   <AppHeader />
-  <!-- Main Content -->
-  <v-main>
+  <div class="bg-blue-darken-4">
     <!-- Section de bienvenue -->
-    <v-container fluid class="my-8 py-12 bg-blue-darken-4">
+    <v-container fluid class="mb-8 py-16 bg-grey-darken-4">
       <h2 class="text-center white--text mb-8 text-h4 text-uppercase">
         Bienvenue {{ userProfile?.nom || "Nom indisponible" }}
       </h2>
@@ -13,11 +12,13 @@
     <v-container class="mb-12">
       <v-row align="center" justify="center">
         <v-col cols="12" sm="8" md="6">
-          <v-card elevation="2" class="pa-6">
+          <v-card elevation="2" class="pa-6 rounded-xl">
             <v-row>
               <!-- Informations Profil -->
               <v-col cols="12" sm="8" class="d-flex flex-column justify-center">
-                <h3 class="pb-5">{{ userProfile?.nom || "Nom indisponible" }}</h3>
+                <h3 class="pb-5">
+                  {{ userProfile?.nom || "Nom indisponible" }}
+                </h3>
                 <v-form v-if="userProfile">
                   <v-text-field
                     v-model="userProfile.email"
@@ -49,7 +50,7 @@
       <h2 class="text-center">Mes activités favorites :</h2>
       <v-row align="center" justify="center" class="my-6">
         <v-col cols="12" sm="8" md="6">
-          <v-list dense>
+          <v-list dense class="rounded-xl">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon color="primary">mdi-weight-lifter</v-icon>
@@ -80,73 +81,66 @@
     </v-container>
 
     <!-- Section Actions -->
-    
+
     <h1 class="text-center">Mes réservations</h1>
     <v-container class="bg-blue-darken-4 w-66 my-5">
-
-      <v-card-text>        
+      <v-card-text class="rounded-xl bg-grey-darken-4">
         <h2 class="text-center mb-5">Espaces</h2>
-        <v-data-table 
-          class="elevation-1 "        
+        <v-data-table
+          class="elevation-1"
           :items="reservationEspace"
           :headers="reservationHeaders"
-          item-value="Id_Espace"          
+          item-value="Id_Espace"
           dense
           :loading="loading"
           loading-text="Chargement..."
-          no-data-text="Aucun espace trouvé."          
+          no-data-text="Aucun espace trouvé."
         >
-      </v-data-table>
+        </v-data-table>
       </v-card-text>
-      
-      <h2 class="text-center">Evenements</h2>
-      <v-card-text>
-        <v-data-table 
-          class="elevation-1 "        
+      <v-card-text class="rounded-xl bg-grey-darken-4 my-12">
+        <h2 class="text-center">Evenements</h2>
+        <v-data-table
+          class="elevation-1"
           :items="ReservationEvenement"
           :headers="EvenementHeader"
-          item-value="Id_Evenement"          
+          item-value="Id_Evenement"
           dense
           :loading="loading"
           loading-text="Chargement..."
           no-data-text="Aucun evenement trouvé."
-          
         ></v-data-table>
       </v-card-text>
 
-      <h2 class="text-center">Cours</h2>
-      <v-card-text>
-        <v-data-table 
-          class="elevation-1 "        
+      <v-card-text class="rounded-xl bg-grey-darken-4 mb-12">
+        <h2 class="text-center">Cours</h2>
+        <v-data-table
+          class="elevation-1"
           :items="ReservationCours"
           :headers="CoursHeader"
-          item-value="Id_Cours"          
+          item-value="Id_Cours"
           dense
           :loading="loading"
           loading-text="Chargement..."
           no-data-text="Aucun cours trouvé."
-          
         ></v-data-table>
       </v-card-text>
 
-      <h2 class="text-center">Equipements</h2>
-      <v-card-text>
-        <v-data-table 
-          class="elevation-1 "        
+      <v-card-text class="rounded-xl bg-grey-darken-4 mb-12">
+        <h2 class="text-center">Equipements</h2>
+        <v-data-table
+          class="elevation-1"
           :items="ReservationEquipements"
           :headers="EquipementsHeader"
-          item-value="Id_Equipements"          
+          item-value="Id_Equipements"
           dense
           :loading="loading"
           loading-text="Chargement..."
           no-data-text="Aucun equipement trouvé."
-          
         ></v-data-table>
       </v-card-text>
     </v-container>
-
-  
-  </v-main>
+  </div>
 
   <!-- Footer -->
   <AppFooter />
@@ -173,30 +167,30 @@ export default {
         { title: "Date", value: "date" },
         { title: "Prix", value: "prix" },
       ],
-      ReservationEvenement:[],
-      EvenementHeader:[
+      ReservationEvenement: [],
+      EvenementHeader: [
         { title: "Nom", value: "nom" },
         { title: "Durée", value: "duree" },
-        { title: "Date et Heure", value: "date" },
-        { title: "Salle", value: "salle" },
+        { title: "Date et Heure", value: "dateHeureEvenement" },
+        { title: "Salle", value: "Id_Salle" },
       ],
-      ReservationCours:[],
-      CoursHeader:[
+      ReservationCours: [],
+      CoursHeader: [
         { title: "Nom", value: "nom" },
-        { title: "Duree", value:"duree"},
+        { title: "Duree", value: "duree" },
         { title: "Interventeur", value: "interventeur" },
         { title: "Date et Heure", value: "date" },
-        { title: "Horaire", value: "horaire"},
+        { title: "Horaire", value: "horaire" },
         { title: "Salle", value: "salle" },
       ],
-      ReservationEquipements:[],
-      EquipementsHeader:[
+      ReservationEquipements: [],
+      EquipementsHeader: [
         { title: "Nom", value: "nom" },
-        { title: "Duree", value:"duree"},
+        { title: "Duree", value: "duree" },
         { title: "Type", value: "type" },
         { title: "Date et Heure", value: "date" },
-        { title: "Quantite", value: "quantite"}
-      ]
+        { title: "Quantite", value: "quantite" },
+      ],
     };
   },
 
@@ -204,10 +198,10 @@ export default {
     // Charger les données utilisateur
     try {
       const profileResponse = await axios.get("http://localhost:3000/profil", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },  
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       });
       this.userProfile = profileResponse.data;
-      console.log("this.userProfile",this.userProfile)
+      console.log("this.userProfile", this.userProfile);
       // Charger les données de l'espace
       await this.fetchEspace();
       await this.fetchEvenements();
@@ -222,11 +216,10 @@ export default {
     async fetchEspace() {
       try {
         this.loading = true;
-        
-        const response = await axios.get(`http://localhost:3000/espace`,
-        {
-            headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-          });
+
+        const response = await axios.get(`http://localhost:3000/espace`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        });
 
         this.reservationEspace = response.data;
       } catch (err) {
@@ -239,11 +232,10 @@ export default {
     async fetchEvenements() {
       try {
         this.loading = true;
-        
-        const response = await axios.get(`http://localhost:3000/evenement`,
-        {
-            headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-          });
+
+        const response = await axios.get(`http://localhost:3000/evenement`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        });
 
         this.ReservationEvenement = response.data;
       } catch (err) {
@@ -256,11 +248,10 @@ export default {
     async fetchCours() {
       try {
         this.loading = true;
-        
-        const response = await axios.get(`http://localhost:3000/cours`,
-        {
-            headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-          });
+
+        const response = await axios.get(`http://localhost:3000/cours`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        });
 
         this.reservationCours = response.data;
       } catch (err) {
@@ -273,11 +264,10 @@ export default {
     async fetchEquipements() {
       try {
         this.loading = true;
-        
-        const response = await axios.get(`http://localhost:3000/equipements`,
-        {
-            headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-          });
+
+        const response = await axios.get(`http://localhost:3000/equipements`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        });
 
         this.ReservationEquipements = response.data;
       } catch (err) {
