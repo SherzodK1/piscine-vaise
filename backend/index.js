@@ -11,20 +11,16 @@ const app = express();
 const prisma = new PrismaClient();
 
 const port = 3000;
-const nodemailer = require('nodemailer');
-require('dotenv').config();
-
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 // Middleware
 app.use(cors()); // Autoriser les requêtes cross-origin
 app.use(express.json()); // Analyser le JSON
 app.use(bodyParser.json());
 
-
-
 // Clé secrète pour les JWT
 const JWT_SECRET = process.env.JWT_SECRET || "votre_secret"; // Remplacez par une valeur sécurisée
-
 
 // Middleware pour vérifier les JWT
 function authenticateToken(req, res, next) {
@@ -40,113 +36,127 @@ function authenticateToken(req, res, next) {
   } catch (error) {
     res.status(403).json({ error: "Invalid token" });
   }
-};
-
+}
 
 //----------- INSCRIPTION -------- //
-app.post('/registrer', async (req, res) => {
-    const { nom, email, password } = req.body;
-  
-    const adresseMail = email;
-    try {
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await prisma.utilisateur.findUnique({ where: { adresseMail } });
-      if (existingUser) {
-        return res.status(400).json({ error: 'Email déja utilisée' });
-      }
-  
-      // Hacher le mot de passe
-      const hashedPassword = await bcrypt.hash(password, 10);
+app.post("/registrer", async (req, res) => {
+  const { nom, email, password } = req.body;
 
-      // Créer un nouvel utilisateur
-      const utilisateur = await prisma.utilisateur.create({
-        data: { nom, adresseMail, motDePasse: hashedPassword },
-      });
-  
-      res.status(201).json({ message: 'Utilisateur créé avec succès', utilisateur });
-      } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Erreur serveur' });
+  const adresseMail = email;
+  try {
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await prisma.utilisateur.findUnique({
+      where: { adresseMail },
+    });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email déja utilisée" });
     }
-  });
 
-    // --------- CONNEXION --------- //
+    // Hacher le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    // Créer un nouvel utilisateur
+    const utilisateur = await prisma.utilisateur.create({
+      data: { nom, adresseMail, motDePasse: hashedPassword },
+    });
 
-    const adresseMail = email;
-    try {
-      // Vérifier si l'utilisateur existe
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { adresseMail } });
-      if (!utilisateur) {
-        return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
-      }
-  
-      // Vérifier le mot de passe
-      const isPasswordValid = await bcrypt.compare(password, utilisateur.motDePasse);
-      if (!isPasswordValid) {
-        return res.status(400).json({ error: 'Email ou mot de passe incorrect' });
-      }
-  
-      // Générer un token JWT
-      const token = jwt.sign({ utilisateurId: utilisateur.Id_Utilisateur }, JWT_SECRET, { expiresIn: '1h' });
-  
-      res.status(200).json({ message: 'Connexion avec succes', token });
-    } catch (error) {
-      console.log(error);
-        res.status(500).json({ error: 'Il y a eu un erreur pendant la connexion' });
+    res
+      .status(201)
+      .json({ message: "Utilisateur créé avec succès", utilisateur });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// --------- CONNEXION --------- //
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const adresseMail = email;
+  try {
+    // Vérifier si l'utilisateur existe
+    const utilisateur = await prisma.utilisateur.findUnique({
+      where: { adresseMail },
+    });
+    if (!utilisateur) {
+      return res.status(400).json({ error: "Email ou mot de passe incorrect" });
     }
-  });
-  
-  // Middleware pour vérifier le JWT
-  function authenticateToken(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: 'Access denied' });
+
+    // Vérifier le mot de passe
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      utilisateur.motDePasse
+    );
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Email ou mot de passe incorrect" });
     }
-  
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.utilisateur = decoded;
-        next();
-    } catch (error) {
-      res.status(403).json({ error: 'Invalid token' });
-    }
-  };
-  
+
+    // Générer un token JWT
+    const token = jwt.sign(
+      { utilisateurId: utilisateur.Id_Utilisateur },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res
+      .status(200)
+      .json({ message: "Connexion avec succes", token, utilisateur });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Il y a eu un erreur pendant la connexion" });
+  }
+});
+
+// Middleware pour vérifier le JWT
+function authenticateToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ error: "Access denied" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.utilisateur = decoded;
+    next();
+  } catch (error) {
+    res.status(403).json({ error: "Invalid token" });
+  }
+}
+
 //------------- PROFIL ---------------- //
 
-  // Route protégée (exemple)
-  app.get('/profil', authenticateToken, async (req, res) => {
-    try {
-      const utilisateur = await prisma.utilisateur.findUnique({ where: { Id_Utilisateur: req.utilisateur.utilisateurId },
-      });
-      if (!utilisateur) {
-        return res.status(404).json({ error: 'Utilisateur pas trouvé' });
-      }
+// Route protégée (exemple)
+app.get("/profil", authenticateToken, async (req, res) => {
+  try {
+    const utilisateur = await prisma.utilisateur.findUnique({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+    });
+    if (!utilisateur) {
+      return res.status(404).json({ error: "Utilisateur pas trouvé" });
+    }
 
-
-
-      // Transformar datos para el frontend
+    // Transformar datos para el frontend
     const profilData = {
       nom: utilisateur.nom,
       email: utilisateur.adresseMail,
       numeroTelephone: utilisateur.numeroTelephone,
-      abonnement: utilisateur.Client?.Forfait?.nom || 'Aucun',
-      activitesFavorites: utilisateur.Client?.S_inscrire.map((inscription) => inscription.Cours.nom) || [],
-      
+      abonnement: utilisateur.Client?.Forfait?.nom || "Aucun",
+      activitesFavorites:
+        utilisateur.Client?.S_inscrire.map(
+          (inscription) => inscription.Cours.nom
+        ) || [],
     };
 
-      res.json(profilData);
-    } catch (error) {
-      console.error('Erreur lors de la récupération du profil:', error);
-      res.status(500).json({ error: 'Error serveur' });
-    }
-  });
+    res.json(profilData);
+  } catch (error) {
+    console.error("Erreur lors de la récupération du profil:", error);
+    res.status(500).json({ error: "Error serveur" });
+  }
+});
 
 // Route pour actualiser le profile utilisateur
-app.put('/profil', authenticateToken, async (req, res) => {
+app.put("/profil", authenticateToken, async (req, res) => {
   const { email, numeroTelephone, motDePasse } = req.body;
 
   try {
@@ -156,7 +166,7 @@ app.put('/profil', authenticateToken, async (req, res) => {
     });
 
     if (!utilisateur) {
-      return res.status(404).json({ error: 'Utilisateur pas trouvé' });
+      return res.status(404).json({ error: "Utilisateur pas trouvé" });
     }
 
     // Preparar los datos de actualización
@@ -164,7 +174,6 @@ app.put('/profil', authenticateToken, async (req, res) => {
     if (email) updateData.adresseMail = email;
     if (numeroTelephone) updateData.numeroTelephone = numeroTelephone;
     if (motDePasse) updateData.motDePasse = await bcrypt.hash(motDePasse, 10);
-        
 
     // Actualizar el perfil
     const utilisateurUpdated = await prisma.utilisateur.update({
@@ -172,18 +181,17 @@ app.put('/profil', authenticateToken, async (req, res) => {
       data: updateData,
     });
 
-    res.json({ message: 'Profil mis à jour avec succès', utilisateur: utilisateurUpdated });
+    res.json({
+      message: "Profil mis à jour avec succès",
+      utilisateur: utilisateurUpdated,
+    });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour du profil:', error);
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error("Erreur lors de la mise à jour du profil:", error);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 });
 
-
-
-
 //-----------------------------------
-
 
 // CRUD Utilisateur
 app.post("/utilisateur", async (req, res) => {
@@ -211,13 +219,11 @@ app.post("/reservation", async (req, res) => {
   }
 });
 
-
-// -------- ROUTE PAIEMENT -------- // 
+// -------- ROUTE PAIEMENT -------- //
 // Route pour créer un PaymentIntent avec Stripe
-app.post('/create-payment-intent', async (req, res) => {
-    try {
-        const { amount } = req.body; // Montant en centimes (par exemple 5000 pour 50€)
-
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount } = req.body; // Montant en centimes (par exemple 5000 pour 50€)
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
@@ -251,7 +257,6 @@ app.post("/charge", async (req, res) => {
   }
 });
 
-
 // Route pour récupérer tous les equipements
 app.get("/equipement", async (req, res) => {
   try {
@@ -263,15 +268,17 @@ app.get("/equipement", async (req, res) => {
       .status(500)
       .json({ message: "Erreur lors de la récupération des equipements." });
   }
-})
+});
 // ---------- CONTACT ----------- //
 
 // Route pour enregistrer le contact et envoyer un email
-app.post('/contact', async (req, res) => {
+app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
-    return res.status(400).json({ error: 'Tous les champs sont obligatoires.' });
+    return res
+      .status(400)
+      .json({ error: "Tous les champs sont obligatoires." });
   }
 
   try {
@@ -284,7 +291,7 @@ app.post('/contact', async (req, res) => {
         createDate: new Date(),
       },
     });
-    
+
     /* // Envoyer une notification par email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -305,12 +312,10 @@ app.post('/contact', async (req, res) => {
 
     res.status(200).json({ message: 'Message enregistré et email envoyé.' });*/
   } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ error: 'Erreur lors de la soumission du message.' });
+    console.error("Erreur:", error);
+    res.status(500).json({ error: "Erreur lors de la soumission du message." });
   }
 });
- 
-
 
 // Route pour récupérer tous les évenements
 app.get("/evenement", async (req, res) => {
@@ -438,7 +443,7 @@ app.post("/equipements", async (req, res) => {
       data: {
         nom,
         type,
-        quantite,
+        quantite: parseInt(quantite),
         duree,
         image,
         Id_Utilisateur,
@@ -456,17 +461,16 @@ app.post("/equipements", async (req, res) => {
 // Mettre à jour un équipement
 app.put("/equipements/:id", async (req, res) => {
   const { id } = req.params;
-  const { nom, type, quantite, duree, image, Id_Utilisateur } = req.body;
+  const { nom, type, quantite, duree, image } = req.body;
   try {
     const updatedEquipement = await prisma.equipement.update({
       where: { Id_Equipement: parseInt(id) },
       data: {
         nom,
         type,
-        quantite,
+        quantite: parseInt(quantite),
         duree,
         image,
-        Id_Utilisateur,
       },
     });
     res.json(updatedEquipement);
@@ -721,8 +725,87 @@ app.get("/salles", async (req, res) => {
   }
 });
 
+// CRUD ESPACE
+
+// Récupérer tous les espaces
+app.get("/espaces", async (req, res) => {
+  try {
+    const espaces = await prisma.espace.findMany();
+    res.json(espaces);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des cours." });
+  }
+});
+
+// Créer un nouveau espace
+app.post("/espaces", async (req, res) => {
+  const { nom, duree, places, prix } = req.body;
+  try {
+    console.log(req.body);
+
+    // Création de l'espaces
+    const newEspace = await prisma.espace.create({
+      data: {
+        nom,
+        duree: parseInt(duree),
+        places: parseInt(places),
+        prix,
+      },
+    });
+
+    res.status(201).json(newEspace);
+  } catch (error) {
+    console.error(error);
+    console.log(req.body);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la création de l'espace." });
+  }
+});
+
+// Mettre à jour un cours
+app.put("/espaces/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nom, duree, places, prix } = req.body;
+  try {
+    const updatedEspace = await prisma.espace.update({
+      where: { Id_Espace: parseInt(id) },
+      data: {
+        nom,
+        duree,
+        places,
+        prix,
+      },
+    });
+    res.json(updatedEspace);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de l'espace." });
+  }
+});
+
+// Supprimer un cours
+app.delete("/espaces/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.espace.delete({
+      where: { Id_Espace: parseInt(id) },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de l'espace." });
+  }
+});
+
 // Démarrage du serveur
 app.listen(port, () => {
   console.log(`Backend en écoute sur http://localhost:${port}`);
 });
-
