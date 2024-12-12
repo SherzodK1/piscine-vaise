@@ -5,7 +5,30 @@ const api = axios.create({
 });
 
 export default {
-  getEquipements() {
+  /**
+   * Récupère tous les équipements.
+   * @returns {Promise} Liste des équipements.
+   */
+  getEquipement() {
     return api.get("/equipement");
+  },
+
+  /**
+   * Récupère un équipement spécifique par son ID.
+   * @param {string} id - L'ID de l'équipement.
+   * @returns {Promise} Détails de l'équipement.
+   */
+  getEquipementById(id) {
+    return api.get(`/equipement/${id}`);
+  },
+
+  /**
+   * Met à jour un événement (par exemple, pour réduire les places disponibles).
+   * @param {string} id - L'ID de l'événement.
+   * @param {object} data - Les données à mettre à jour (comme le nombre de places).
+   * @returns {Promise} La réponse de la mise à jour.
+   */
+  updateEvenement(id, data) {
+    return api.put(`/evenement/${id}`, data);
   },
 };

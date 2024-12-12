@@ -14,7 +14,7 @@
         >
           <h1 class="text-h3 white--text">Nos Cours</h1>
           <p class="white--text ma-2">
-            Explorez notre large gamme de Cours pour vos activités sportives.
+            Explorez notre large gamme de cours pour vos activités sportives.
           </p>
         </v-container>
       </v-img>
@@ -27,7 +27,7 @@
 
         <!-- Chargement ou Erreur -->
         <div v-if="loading" class="text-center white--text">
-          Chargement des cousr...
+          Chargement des cours...
         </div>
         <div v-if="error" class="text-center red--text">
           Erreur : {{ error }}
@@ -37,30 +37,26 @@
         <v-row v-if="cours && cours.length > 0">
           <v-col
             v-for="cour in cours"
-            :key="cours.id"
+            :key="cour.id_Cours"
             cols="12"
             sm="6"
             md="4"
             class="d-flex justify-center mb-6"
           >
             <v-card class="text-center rounded-lg" outlined>
-              <!-- Affichage de l'image à partir de Blob -->
               <v-img
-                :src="getImageUrl(cours.imageBytes)"
+                :src="getImageUrl(cour.image)"
                 height="200"
                 cover
               ></v-img>
               <v-card-title class="text-h5">{{ cour.nom }}</v-card-title>
               <v-card-text>
-                <p> {{ cour.type }}</p>
                 <p>Capacité : {{ cour.places }}</p>
                 <p>Durée : {{ cour.duree }} heures</p>
-                <p>Lieu : {{ cour.Id_Salle }} </p>
-                <p>Intervenant : {{ cour.Id_Utilisateur }} </p>
               </v-card-text>
-              <v-card-actions class="d-flex justify-center">
-                <v-btn color="primary">Informations location</v-btn>
-              </v-card-actions>
+              <v-btn @click="openDialog(cour)" color="primary">
+                Réserver
+              </v-btn>
             </v-card>
           </v-col>
         </v-row>
@@ -69,6 +65,26 @@
         <div v-else class="text-center white--text">
           Aucun cours disponible pour le moment.
         </div>
+
+        <!-- Dialog de détails -->
+        <v-dialog v-model="dialog" max-width="500">
+          <v-card>
+            <v-img :src="getImageUrl(selectedCour?.image)" height="300" cover></v-img>
+            <v-card-title class="text-h5">{{ selectedCour?.nom }}</v-card-title>
+            <v-card-text>
+              <p><strong>Type :</strong> {{ selectedCour?.type }}</p>
+              <p><strong>Capacité :</strong> {{ selectedCour?.places }}</p>
+              <p><strong>Durée :</strong> {{ selectedCour?.duree }} heures</p>
+              <p><strong>Lieu :</strong> {{ selectedCour?.Id_Salle }}</p>
+              <p><strong>Intervenant :</strong> {{ selectedCour?.interventeur }}</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="dialog = false">Fermer</v-btn>
+              <v-btn text color="primary" @click="reserver(selectedCour)">Réserver</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
     <AppFooter />
@@ -88,35 +104,44 @@ export default {
   },
   data() {
     return {
-      cours: [], // Liste des équipements
-      loading: true, // Indicateur de chargement
-      error: null, // Variable pour les erreurs
+      cours: [],
+      loading: true,
+      error: null,
+      dialog: false,
+      selectedCour: null,
     };
   },
   methods: {
     async fetchCours() {
       try {
         const response = await api.getCours();
-        this.cours = response.data; // Assignation des équipements
+        this.cours = response.data;
       } catch (err) {
-        this.error = err.message; // Gestion des erreurs
+        this.error = err.message;
       } finally {
-        this.loading = false; // Fin du chargement
+        this.loading = false;
       }
     },
-    /**
-     * Convertit un tableau d'octets en URL utilisable pour l'image.
-     * @param {Uint8Array} byteArray - Les données de l'image en Bytes.
-     * @returns {string} - L'URL Blob de l'image.
-     */
     getImageUrl(byteArray) {
-      if (!byteArray) return "https://via.placeholder.com/400"; // Placeholder si aucune image
-      const blob = new Blob([byteArray], { type: "image/jpeg" }); // Conversion en Blob
-      return URL.createObjectURL(blob); // Création de l'URL Blob
+      if (!byteArray) return "https://via.placeholder.com/400";
+      const blob = new Blob([byteArray], { type: "image/jpeg" });
+      return URL.createObjectURL(blob);
+    },
+    openDialog(cour) {
+      this.selectedCour = cour;
+      this.dialog = true;
+    },
+    reserver(cour) {
+      if (cour?.id_Cours) {
+        this.$router.push({
+          name: "ReservationPage",
+          query: { idCours: cour.id_Cours },
+        });
+      }
     },
   },
   async created() {
-    await this.fetchCours(); // Récupérer les équipements
+    await this.fetchCours();
   },
 };
 </script>

@@ -1,5 +1,3 @@
-// apiequipement.js
-
 import axios from "axios";
 
 const api = axios.create({
@@ -11,8 +9,8 @@ export default {
    * Récupère tous les équipements.
    * @returns {Promise} Liste des équipements.
    */
-  getCours() {
-    return api.get("/cours");
+  getEvenement() {
+    return api.get("/evenement");
   },
 
   /**
@@ -20,7 +18,9 @@ export default {
    * @param {string} id - L'ID de l'équipement.
    * @returns {Promise} Détails de l'équipement.
    */
-  getCoursById(id) {
-    return api.get(`/cours/${id}`);
+  getEvenementById(id) {
+    return api.get(`/evenement/${id}`);
   },
 };
+
+
