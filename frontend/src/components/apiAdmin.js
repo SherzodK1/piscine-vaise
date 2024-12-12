@@ -73,6 +73,23 @@ export default {
     return api.delete(`/evenements/${id}`);
   },
 
+  // **Espaces**
+  getEspaces() {
+    return api.get("/espaces");
+  },
+
+  createEspace(data) {
+    return api.post("/espaces", data);
+  },
+
+  updateEspace(id, data) {
+    return api.put(`/espaces/${id}`, data);
+  },
+
+  deleteEspace(id) {
+    return api.delete(`/espaces/${id}`);
+  },
+
   // **Salles**
   getSalles() {
     return api.get("/salles");
