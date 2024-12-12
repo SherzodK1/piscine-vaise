@@ -255,8 +255,8 @@ app.post("/charge", async (req, res) => {
 // Route pour récupérer tous les equipements
 app.get("/equipement", async (req, res) => {
   try {
-    const equipements = await prisma.equipement.findMany();
-    res.json(equipements);
+    const equipement = await prisma.equipement.findMany();
+    res.json(equipement);
   } catch (error) {
     console.error(error);
     res
@@ -315,8 +315,8 @@ app.post('/contact', async (req, res) => {
 // Route pour récupérer tous les évenements
 app.get("/evenement", async (req, res) => {
   try {
-    const evenements = await prisma.evenement.findMany();
-    res.json(evenements);
+    const evenement = await prisma.evenement.findMany();
+    res.json(evenement);
   } catch (error) {
     console.error(error);
     res

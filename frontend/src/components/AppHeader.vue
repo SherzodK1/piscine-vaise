@@ -7,9 +7,9 @@ import { login } from './login.js'
     <v-img height="60" src="@/assets/logoAtlantis.svg" />
     <v-spacer></v-spacer>
     <v-btn to="/forfait">Forfait</v-btn>
-    <v-btn to="/equipements">Equipements</v-btn>
+    <v-btn to="/equipement">Equipements</v-btn>
     <v-btn to="/cours">Cours</v-btn>
-    <v-btn to="/evenements">Evénements</v-btn>
+    <v-btn to="/evenement">Evénements</v-btn>
     <v-btn @click="handleReservation" >Réservation</v-btn>
     <AppLogin/>
   </v-app-bar>

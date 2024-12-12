@@ -7,8 +7,8 @@
           <li><router-link to="/accueil">Accueil</router-link></li>
           <li><router-link to="/aPropos">À propos</router-link></li>
           <li><router-link to="/cours">Cours</router-link></li>
-          <li><router-link to="/equipements">equipements</router-link></li>
-          <li><router-link to="/evenements">evenements</router-link></li>
+          <li><router-link to="/equipement">equipements</router-link></li>
+          <li><router-link to="/evenement">evenements</router-link></li>
           <li><router-link to="/pageProfil">pageProfil</router-link></li>
           <li>
             <router-link to="/reservationSalle">reservationSalle</router-link>
