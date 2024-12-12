@@ -1,9 +1,9 @@
 <template>
-  <AppHeader/>
-  <div class="bg-white pb-16">
+  <AppHeader />
+  <div class="bg-grey-darken-4">
     <!-- Section Hero -->
     <v-img
-      src="https://picsum.photos/400/400?random=3"
+      src="https://i.goopics.net/pjpgdc.jpg"
       max-height="300px"
       cover
       class="d-flex justify-start align-center mb-14"
@@ -19,7 +19,7 @@
           <v-container
             v-for="(forfait, index) in forfaits"
             :key="index"
-            class="text-center rounded-lg bg-white mb-8"
+            class="text-center rounded-lg bg-grey-darken-4 mb-8"
             max-width="60%"
           >
             <h2 class="text-h5">{{ forfait.type }}</h2>
@@ -28,7 +28,9 @@
             <!-- Liste des catégories pour chaque forfait -->
             <v-expansion-panels>
               <v-expansion-panel>
-                <v-expansion-panel-title>Choisissez une option</v-expansion-panel-title>
+                <v-expansion-panel-title
+                  >Choisissez une option</v-expansion-panel-title
+                >
                 <v-expansion-panel-text>
                   <div
                     v-for="(category, idx) in forfait.categories"
@@ -48,10 +50,18 @@
                   </div>
 
                   <!-- Bouton pour redirection -->
-                  <div v-if="selectedCategory[forfait.type]" class="d-flex justify-center mt-4">
+                  <div
+                    v-if="selectedCategory[forfait.type]"
+                    class="d-flex justify-center mt-4"
+                  >
                     <v-btn
                       color="primary"
-                      @click="redirectToStripe(forfait.type, selectedCategory[forfait.type])"
+                      @click="
+                        redirectToStripe(
+                          forfait.type,
+                          selectedCategory[forfait.type]
+                        )
+                      "
                     >
                       Souscrire
                     </v-btn>
@@ -63,8 +73,8 @@
         </v-row>
       </v-col>
     </v-container>
+    <AppFooter />
   </div>
-<AppFooter/>
 </template>
 
 <script setup>
@@ -117,14 +127,16 @@ const redirectToStripe = (forfaitType, category) => {
       Famille: "https://stripe.com/checkout/aquatique-famille",
       Jeunesse: "https://stripe.com/checkout/aquatique-jeunesse",
       Sénior: "https://stripe.com/checkout/aquatique-senior",
-      "Famille Nombreuse": "https://stripe.com/checkout/aquatique-famille-nombreuse",
+      "Famille Nombreuse":
+        "https://stripe.com/checkout/aquatique-famille-nombreuse",
     },
     "Forfait Salle": {
       Adulte: "https://stripe.com/checkout/salle-adulte",
       Famille: "https://stripe.com/checkout/salle-famille",
       Jeunesse: "https://stripe.com/checkout/salle-jeunesse",
       Sénior: "https://stripe.com/checkout/salle-senior",
-      "Famille Nombreuse": "https://stripe.com/checkout/salle-famille-nombreuse",
+      "Famille Nombreuse":
+        "https://stripe.com/checkout/salle-famille-nombreuse",
     },
     "Forfait Annuel": {
       Individuel: "https://stripe.com/checkout/annuel-individuel",
@@ -143,12 +155,3 @@ const redirectToStripe = (forfaitType, category) => {
   }
 };
 </script>
-
-<style>
-.bg-white {
-  background-color: white;
-}
-.bg-blue-darken-4 {
-  background-color: #003366;
-}
-</style>

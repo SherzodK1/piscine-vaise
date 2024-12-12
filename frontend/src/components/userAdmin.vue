@@ -114,7 +114,7 @@ export default {
         estAdmin: false,
       },
       userHeaders: [
-        { text: "Nom", value: "nom" },
+        { title: "Nom", value: "nom" },
         { text: "Email", value: "adresseMail" },
         { text: "Téléphone", value: "numeroTelephone" },
         { text: "Admin", value: "estAdmin", align: "center" },

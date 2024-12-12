@@ -28,7 +28,10 @@ export default {
    * @param {object} data - Les données à mettre à jour (comme le nombre de places).
    * @returns {Promise} La réponse de la mise à jour.
    */
-  updateEvenement(id, data) {
-    return api.put(`/evenement/${id}`, data);
+  updateEquipement(id, data) {
+    return api.put(`/equipement/${id}`, data);
+  },
+  empreintEquipement(data) {
+    return api.post("/empreint", data);
   },
 };
