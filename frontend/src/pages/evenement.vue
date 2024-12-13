@@ -146,9 +146,6 @@ export default {
       this.user = JSON.parse(localStorage.getItem("user"));
       this.enregistrement.Id_Evenement = this.selectedEvenement.Id_Evenement;
       this.enregistrement.Id_Utilisateur = this.user.Id_Utilisateur;
-      console.log(this.selectedEvenement);
-      console.log(this.enregistrement.Id_Evenement);
-      console.log(this.enregistrement.Id_Utilisateur);
       try {
         await api.enregistrementEvenement(this.enregistrement);
         alert("Vous êtes maintenant inscrit à cet événement!");

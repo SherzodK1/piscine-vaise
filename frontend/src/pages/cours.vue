@@ -131,9 +131,6 @@ export default {
       this.user = JSON.parse(localStorage.getItem("user"));
       this.inscritption.Id_Cours = this.selectedCour.Id_Cours;
       this.inscritption.Id_Utilisateur = this.user.Id_Utilisateur;
-      console.log(this.selectedCour);
-      console.log(this.inscritption.Id_Cours);
-      console.log(this.inscritption.Id_Utilisateur);
       try {
         await api.inscriptionCours(this.inscritption);
         alert("Vous êtes maintenant inscrit à ce cours !");
