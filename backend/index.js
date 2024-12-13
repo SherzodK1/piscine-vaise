@@ -108,22 +108,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Middleware pour vérifier le JWT
-function authenticateToken(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Access denied" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.utilisateur = decoded;
-    next();
-  } catch (error) {
-    res.status(403).json({ error: "Invalid token" });
-  }
-}
-
 //------------- PROFIL ---------------- //
 
 // Route protégée (exemple)
@@ -136,15 +120,17 @@ app.get("/profil", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Utilisateur pas trouvé" });
     }
 
-
-     // Transformar datos para el frontend
+    // Transformar datos para el frontend
 
     const profilData = {
       nom: utilisateur.nom,
       email: utilisateur.adresseMail,
       numeroTelephone: utilisateur.numeroTelephone,
-      abonnement: utilisateur.Client?.Forfait?.nom || 'Aucun',
-      activitesFavorites: utilisateur.Client?.S_inscrire.map((inscription) => inscription.Cours.nom) || [],
+      abonnement: utilisateur.Client?.Forfait?.nom || "Aucun",
+      activitesFavorites:
+        utilisateur.Client?.S_inscrire.map(
+          (inscription) => inscription.Cours.nom
+        ) || [],
       Id_Utilisateur: utilisateur.Id_Utilisateur,
     };
 
@@ -191,14 +177,12 @@ app.put("/profil", authenticateToken, async (req, res) => {
   }
 });
 
-
 // Récupérer tous les espaces réservés par l'utilisateur
 app.get("/espace", authenticateToken, async (req, res) => {
-  
   try {
     // Récupérer les espaces réservés par l'utilisateur
     const espaces = await prisma.espace.findMany({
-      where: { Id_Utilisateur: req.utilisateur.utilisateurId }, 
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
     });
 
     res.json(espaces);
@@ -210,28 +194,28 @@ app.get("/espace", authenticateToken, async (req, res) => {
   }
 });
 
-
-// Récupérer tous les evenements réservés par l'utilisateur
+//Récupérer tous les evenements réservés par l'utilisateur
 app.get("/evenement", authenticateToken, async (req, res) => {
-  
   try {
     // Récupérer les evenements réservés par l'utilisateur
-    const evenements = await prisma.evenement.findMany({
-      where: { Id_Utilisateur: req.utilisateur.utilisateurId }, 
+    const evenements = await prisma.s_enregistrer.findMany({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+      include: {
+        evenement: true
+      }
     });
 
     res.json(evenements);
   } catch (error) {
     console.error("Erreur lors de la récupération des evenements :", error);
-    res
-      .status(500)
-      .json({ message: "Erreur interne lors de la récupération des evenements." });
+    res.status(500).json({
+      message: "Erreur interne lors de la récupération des evenements.",
+    });
   }
 });
 
-// Récupérer tous les cours réservés par l'utilisateur
+// Récupérer tous les cours réservés par l'utilisateure
 app.get("/cours", authenticateToken, async (req, res) => {
-  
   try {
     // Récupérer les cours réservés par l'utilisateur
     const cours = await prisma.s_inscrire.findMany({
@@ -251,17 +235,23 @@ app.get("/cours", authenticateToken, async (req, res) => {
 });
 
 // Créer un nouvel reserve d'équipement
-app.post("/equipement", authenticateToken, async (req, res) => {
-  const { duree, createdAt, Id_Utilisateur } = req.body;
+app.post("/empreint", authenticateToken, async (req, res) => {
+  const { 
+    Id_Equipement,
+    Id_Utilisateur,
+    duree,
+    dateEmpreint} = req.body;
+
   try {
-    const newEquipement = await prisma.empreinter.create({
+    const newEmpreint= await prisma.empreinter.create({
       data: {
-        duree,
-        dateEmpreint: new Date(createdAt),
+        Id_Equipement,
         Id_Utilisateur,
+        duree,
+        dateEmpreint: new Date(dateEmpreint),
       },
     });
-    res.status(201).json(newEquipement);
+    res.status(201).json(newEmpreint);
   } catch (error) {
     console.error(error);
     res
@@ -272,7 +262,6 @@ app.post("/equipement", authenticateToken, async (req, res) => {
 
 // Récupérer tous les equipements réservés par l'utilisateur
 app.get("/equipements", authenticateToken, async (req, res) => {
-  
   try {
     // Récupérer les equipements réservés par l'utilisateur
     const equipements = await prisma.empreinter.findMany({
@@ -285,14 +274,11 @@ app.get("/equipements", authenticateToken, async (req, res) => {
     res.json(equipements);
   } catch (error) {
     console.error("Erreur lors de la récupération des equipements :", error);
-    res
-      .status(500)
-      .json({ message: "Erreur interne lors de la récupération des equipements." });
+    res.status(500).json({
+      message: "Erreur interne lors de la récupération des equipements.",
+    });
   }
 });
-
-
-
 
 //-----------------------------------
 
@@ -394,7 +380,7 @@ app.post("/contact", async (req, res) => {
         createDate: new Date(),
       },
     });
-    res.status(200).json({ message: 'Message enregistré' });
+    res.status(200).json({ message: "Message enregistré" });
   } catch (error) {
     console.error("Erreur:", error);
     res.status(500).json({ error: "Erreur lors de la soumission du message." });
@@ -426,7 +412,6 @@ app.get("/cours", async (req, res) => {
       .json({ message: "Erreur lors de la récupération des cours." });
   }
 });
-
 
 app.get("/utilisateurs", async (req, res) => {
   try {
@@ -903,7 +888,7 @@ app.post("/inscrire", async (req, res) => {
 
   const s_inscrire = await prisma.s_inscrire.findUnique({
     where: { 
-      s_inscrire_id:{
+      Id_Cours_Id_Utilisateur:{
         Id_Cours: parseInt(Id_Cours),
         Id_Utilisateur: parseInt(Id_Utilisateur) },
     }
@@ -963,7 +948,7 @@ app.post("/enregistre", async (req, res) => {
   }
 });
 
-//Route reserver une espace 
+//Route reserver une espace
 app.post("/reservation-salle", authenticateToken, async (req, res) => {
   const { nom, typeEvenement, date, duree, nombrePersonnes } = req.body;
 
@@ -979,20 +964,44 @@ app.post("/reservation-salle", authenticateToken, async (req, res) => {
         date: new Date(date), // Conversion en objet Date
         duree: parseFloat(duree),
         places: parseInt(nombrePersonnes),
-        Id_Utilisateur: req.utilisateur.utilisateurId
+        Id_Utilisateur: req.utilisateur.utilisateurId,
       },
     });
 
-    res.status(201).json({ message: "Réservation créée avec succès", reservation });
+    res
+      .status(201)
+      .json({ message: "Réservation créée avec succès", reservation });
   } catch (error) {
     console.error("Erreur lors de la création de la réservation :", error);
-    res.status(500).json({ error: "Erreur serveur lors de la création de la réservation" });
-
+    res
+      .status(500)
+      .json({ error: "Erreur serveur lors de la création de la réservation" });
   }
-});
+}),
+  app.post("/empreint", async (req, res) => {
+    const { Id_Equipement, Id_Utilisateur, dateEmpreint, duree } = req.body;
 
-// Démarrage du serveur
-app.listen(port, () => {
-  console.log(`Backend en écoute sur http://localhost:${port}`);
-});
-  
+    if (!Id_Equipement || !Id_Utilisateur) {
+      return res.status(400).json({ error: "Données invalides" });
+    }
+
+    try {
+      console.log(req.body);
+      const empreint = await prisma.empreinter.create({
+        data: {
+          Id_Equipement: parseInt(Id_Equipement),
+          Id_Utilisateur: parseInt(Id_Utilisateur),
+          dateEmpreint: new Date(dateEmpreint),
+          duree,
+        },
+      });
+      res.status(201).json({ message: "Inscription réussie", empreint });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Erreur lors de l'enregistrment" });
+    }
+  }),
+  // Démarrage du serveur
+  app.listen(port, () => {
+    console.log(`Backend en écoute sur http://localhost:${port}`);
+  });

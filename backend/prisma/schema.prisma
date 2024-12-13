@@ -19,7 +19,7 @@ model client {
   //Forfait        Forfait?        @relation(fields: [Id_Forfait], references: [Id_Forfait], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_2")
   empreinter     empreinter[]
   //Espace         Espace[]
-  //S_enregistrer  S_enregistrer[]
+  s_enregistrer  s_enregistrer[]
   s_inscrire     s_inscrire[]
 
   @@index([Id_Forfait], map: "Id_Forfait")
@@ -92,6 +92,7 @@ model evenement {
   Id_Salle           Int       @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
   image              String?
+  s_enregistrer     s_enregistrer[]
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
@@ -113,8 +114,10 @@ model paiement {
 model s_enregistrer {
   Id_Evenement   Int
   Id_Utilisateur Int
+  evenement       evenement  @relation(fields: [Id_Evenement], references: [Id_Evenement], onDelete: NoAction, onUpdate: NoAction, map: "s_enregistrer_ibfk_1")
+  client         client @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "s_enregistrer_ibfk_2")
 
-  @@id(name: "s_enregistrer_id",[Id_Evenement, Id_Utilisateur])
+  @@id(name: "s_enregistrer_id", [Id_Evenement, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 

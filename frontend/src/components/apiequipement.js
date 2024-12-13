@@ -22,19 +22,18 @@ export default {
     return api.get(`/equipement/${id}`);
   },
 
-  enregistrementEquipement(data) {
-    return api.post("/equipement", data, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },  
-    });
-  },
-
   /**
    * Met à jour un événement (par exemple, pour réduire les places disponibles).
    * @param {string} id - L'ID de l'événement.
    * @param {object} data - Les données à mettre à jour (comme le nombre de places).
    * @returns {Promise} La réponse de la mise à jour.
    */
-  updateEvenement(id, data) {
-    return api.put(`/evenement/${id}`, data);
+  updateEquipement(id, data) {
+    return api.put(`/equipement/${id}`, data);
+  },
+  empreintEquipement(data) {
+    return api.post("/empreint", data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },  
+    });
   },
 };
