@@ -10,7 +10,7 @@ export default {
    * @returns {Promise} Liste des équipements.
    */
   getEquipement() {
-    return api.get("/equipement");
+    return api.get("/all-equipement");
   },
 
   /**
@@ -32,6 +32,8 @@ export default {
     return api.put(`/equipement/${id}`, data);
   },
   empreintEquipement(data) {
-    return api.post("/empreint", data);
+    return api.post("/empreint", data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },  
+    });
   },
 };

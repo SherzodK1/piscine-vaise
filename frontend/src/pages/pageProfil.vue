@@ -102,8 +102,8 @@
         <h2 class="text-center">Evenements</h2>
         <v-data-table
           class="elevation-1"
-          :items="ReservationEvenement"
-          :headers="EvenementHeader"
+          :items="reservationEvenement"
+          :headers="evenementHeader"
           item-value="Id_Evenement"
           dense
           :loading="loading"
@@ -116,8 +116,8 @@
         <h2 class="text-center">Cours</h2>
         <v-data-table
           class="elevation-1"
-          :items="ReservationCours"
-          :headers="CoursHeader"
+          :items="reservationCours"
+          :headers="coursHeader"
           item-value="Id_Cours"
           dense
           :loading="loading"
@@ -130,8 +130,8 @@
         <h2 class="text-center">Equipements</h2>
         <v-data-table
           class="elevation-1"
-          :items="ReservationEquipements"
-          :headers="EquipementsHeader"
+          :items="reservationEquipements"
+          :headers="equipementsHeader"
           item-value="Id_Equipements"
           dense
           :loading="loading"
@@ -167,15 +167,15 @@ export default {
         { title: "Date", value: "date" },
         { title: "Prix", value: "prix" },
       ],
-      ReservationEvenement: [],
-      EvenementHeader: [
+      reservationEvenement: [],
+      evenementHeader: [
         { title: "Nom", value: "nom" },
         { title: "Durée", value: "duree" },
         { title: "Date et Heure", value: "dateHeureEvenement" },
         { title: "Salle", value: "Id_Salle" },
       ],
-      ReservationCours: [],
-      CoursHeader: [
+      reservationCours: [],
+      coursHeader: [
         { title: "Nom", value: "nom" },
         { title: "Duree", value: "duree" },
         { title: "Interventeur", value: "interventeur" },
@@ -183,8 +183,8 @@ export default {
         { title: "Horaire", value: "horaire" },
         { title: "Salle", value: "salle" },
       ],
-      ReservationEquipements: [],
-      EquipementsHeader: [
+      reservationEquipements: [],
+      equipementsHeader: [
         { title: "Nom", value: "nom" },
         { title: "Duree", value: "duree" },
         { title: "Type", value: "type" },
@@ -201,7 +201,6 @@ export default {
         headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       });
       this.userProfile = profileResponse.data;
-      console.log("this.userProfile", this.userProfile);
       // Charger les données de l'espace
       await this.fetchEspace();
       await this.fetchEvenements();
@@ -237,7 +236,13 @@ export default {
           headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
         });
 
-        this.ReservationEvenement = response.data;
+        this.reservationEvenement = response.data.map(
+          (entry) => {return {
+            nom: entry.evenement.nom,
+            duree: entry.evenement.duree,
+            dateHeureEvenement: entry.evenement.interventeur,
+            Id_Salle: entry.evenement.Id_Salle
+          }});
       } catch (err) {
         this.error = err.message;
       } finally {
@@ -253,7 +258,16 @@ export default {
           headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
         });
 
-        this.reservationCours = response.data;
+        this.reservationCours = response.data.map(
+          (entry) => {return {
+            nom: entry.cours.nom,
+            duree: entry.cours.duree,
+            interventeur: entry.cours.interventeur,
+            date: entry.cours.dateCours,
+            horaire: entry.cours.horaire,
+            salle: entry.cours.Id_Salle
+          }}
+        );
       } catch (err) {
         this.error = err.message;
       } finally {
@@ -269,7 +283,17 @@ export default {
           headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
         });
 
-        this.ReservationEquipements = response.data;
+        this.reservationEquipements = response.data.map(
+        (empreinter) => {
+          return {
+            nom: empreinter.equipement.nom,
+            quantite: empreinter.equipement.quantite,
+            duree: empreinter.duree,
+            dateEmpreint: empreinter.dateEmpreint,
+            type: empreinter.equipement.type
+            }
+        }
+      );
       } catch (err) {
         this.error = err.message;
       } finally {

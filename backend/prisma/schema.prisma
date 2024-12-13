@@ -15,6 +15,12 @@ model client {
   Id_Utilisateur Int      @id
   estAbonne      Boolean?
   Id_Forfait     Int?
+  //Utilisateur    Utilisateur     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_1")
+  //Forfait        Forfait?        @relation(fields: [Id_Forfait], references: [Id_Forfait], onDelete: NoAction, onUpdate: NoAction, map: "Client_ibfk_2")
+  empreinter     empreinter[]
+  //Espace         Espace[]
+  s_enregistrer  s_enregistrer[]
+  s_inscrire     s_inscrire[]
 
   @@index([Id_Forfait], map: "Id_Forfait")
 }
@@ -28,9 +34,13 @@ model cours {
   places         Int?
   horaire        DateTime? @db.DateTime(0)
   dateCours      DateTime? @db.Date
-  Id_Salle       Int       @unique(map: "Id_Salle")
+  Id_Salle       Int       
   Id_Utilisateur Int?
   image          String?
+
+  // salle          salle        @relation(fields: [Id_Salle], references: [Id_Salle], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_1")
+  //Admin          Admin?       @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Cours_ibfk_2")
+  s_inscrire     s_inscrire[]
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
@@ -41,19 +51,22 @@ model empreinter {
   dateEmpreint   DateTime @db.DateTime(0)
   duree          Decimal  @db.Decimal(15, 2)
 
+  equipement     equipement @relation(fields: [Id_Equipement], references: [Id_Equipement], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_1")
+  client         client     @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "Empreinter_ibfk_2")
+
   @@id([Id_Utilisateur, Id_Equipement])
   @@index([Id_Equipement], map: "Id_Equipement")
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
 model equipement {
+  Id_Equipement Int      @id @default(autoincrement())
   nom           String
   type          String
-  duree         Decimal
   createdAt     DateTime @default(now())
-  Id_Equipement Int      @id @default(autoincrement())
   image         String?
   quantite      Int
+  empreinter     empreinter[]
 }
 
 model espace {
@@ -79,6 +92,7 @@ model evenement {
   Id_Salle           Int       @unique(map: "Id_Salle")
   Id_Utilisateur     Int?
   image              String?
+  s_enregistrer     s_enregistrer[]
 
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
@@ -100,15 +114,18 @@ model paiement {
 model s_enregistrer {
   Id_Evenement   Int
   Id_Utilisateur Int
+  evenement       evenement  @relation(fields: [Id_Evenement], references: [Id_Evenement], onDelete: NoAction, onUpdate: NoAction, map: "s_enregistrer_ibfk_1")
+  client         client @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "s_enregistrer_ibfk_2")
 
-  @@id([Id_Evenement, Id_Utilisateur])
+  @@id(name: "s_enregistrer_id", [Id_Evenement, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }
 
 model s_inscrire {
   Id_Cours       Int
   Id_Utilisateur Int
-
+  cours          cours  @relation(fields: [Id_Cours], references: [Id_Cours], onDelete: NoAction, onUpdate: NoAction, map: "S_inscrire_ibfk_1")
+  client         client @relation(fields: [Id_Utilisateur], references: [Id_Utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "S_inscrire_ibfk_2")
   @@id([Id_Cours, Id_Utilisateur])
   @@index([Id_Utilisateur], map: "Id_Utilisateur")
 }

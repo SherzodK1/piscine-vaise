@@ -15,4 +15,11 @@ import EventAdmin from "@/components/EventAdmin.vue";
 import EquipmentAdmin from "@/components/EquipmentAdmin.vue";
 import SpaceAdmin from "@/components/SpaceAdmin.vue";
 import AppHeader from "@/components/AppHeader.vue";
+import { login } from '../components/login.js'
+
+if (!login.authenticated){
+  this.$router.push("/accueil");
+}
+
+
 </script>

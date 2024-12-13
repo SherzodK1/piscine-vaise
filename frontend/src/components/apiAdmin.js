@@ -24,11 +24,11 @@ export default {
 
   // **Équipements**
   getEquipements() {
-    return api.get("/equipements");
+    return api.get("/all-equipement");
   },
 
   createEquipement(data) {
-    return api.post("/equipements", data);
+    return api.post("/admin-equipements", data);
   },
 
   updateEquipement(id, data) {
@@ -41,7 +41,7 @@ export default {
 
   // **Cours**
   getCours() {
-    return api.get("/cours");
+    return api.get("/all-cours");
   },
 
   createCours(data) {
@@ -58,7 +58,7 @@ export default {
 
   // **Événements**
   getEvenements() {
-    return api.get("/evenements");
+    return api.get("/all-evenement");
   },
 
   createEvenement(data) {

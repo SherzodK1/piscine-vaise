@@ -198,8 +198,11 @@ app.get("/espace", authenticateToken, async (req, res) => {
 app.get("/evenement", authenticateToken, async (req, res) => {
   try {
     // Récupérer les evenements réservés par l'utilisateur
-    const evenements = await prisma.evenement.findMany({
+    const evenements = await prisma.s_enregistrer.findMany({
       where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+      include: {
+        evenement: true
+      }
     });
 
     res.json(evenements);
@@ -211,12 +214,15 @@ app.get("/evenement", authenticateToken, async (req, res) => {
   }
 });
 
-// Récupérer tous les cours réservés par l'utilisateur
+// Récupérer tous les cours réservés par l'utilisateure
 app.get("/cours", authenticateToken, async (req, res) => {
   try {
     // Récupérer les cours réservés par l'utilisateur
-    const cours = await prisma.cours.findMany({
-      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+    const cours = await prisma.s_inscrire.findMany({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId }, 
+      include: {
+        cours: true, // Inclure les informations des équipements associés
+      },
     });
 
     res.json(cours);
@@ -228,12 +234,41 @@ app.get("/cours", authenticateToken, async (req, res) => {
   }
 });
 
+// Créer un nouvel reserve d'équipement
+app.post("/empreint", authenticateToken, async (req, res) => {
+  const { 
+    Id_Equipement,
+    Id_Utilisateur,
+    duree,
+    dateEmpreint} = req.body;
+
+  try {
+    const newEmpreint= await prisma.empreinter.create({
+      data: {
+        Id_Equipement,
+        Id_Utilisateur,
+        duree,
+        dateEmpreint: new Date(dateEmpreint),
+      },
+    });
+    res.status(201).json(newEmpreint);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la création de l'équipement." });
+  }
+});
+
 // Récupérer tous les equipements réservés par l'utilisateur
 app.get("/equipements", authenticateToken, async (req, res) => {
   try {
     // Récupérer les equipements réservés par l'utilisateur
-    const equipements = await prisma.equipement.findMany({
-      where: { Id_Utilisateur: req.utilisateur.utilisateurId },
+    const equipements = await prisma.empreinter.findMany({
+      where: { Id_Utilisateur: req.utilisateur.utilisateurId }, 
+      include: {
+        equipement: true, // Inclure les informations des équipements associés
+      },
     });
 
     res.json(equipements);
@@ -312,7 +347,7 @@ app.post("/charge", async (req, res) => {
 });
 
 // Route pour récupérer tous les equipements
-app.get("/equipement", async (req, res) => {
+app.get("/all-equipement", async (req, res) => {
   try {
     const equipement = await prisma.equipement.findMany();
     res.json(equipement);
@@ -353,7 +388,7 @@ app.post("/contact", async (req, res) => {
 });
 
 // Route pour récupérer tous les évenements
-app.get("/evenement", async (req, res) => {
+app.get("/all-evenement", async (req, res) => {
   try {
     const evenement = await prisma.evenement.findMany();
     res.json(evenement);
@@ -471,15 +506,14 @@ app.get("/equipements", async (req, res) => {
 });
 
 // Créer un nouvel équipement
-app.post("/equipements", async (req, res) => {
+app.post("/admin-equipements", async (req, res) => {
   const { nom, type, quantite, duree, image, Id_Utilisateur } = req.body;
   try {
     const newEquipement = await prisma.equipement.create({
       data: {
         nom,
         type,
-        quantite: parseInt(quantite),
-        duree,
+        quantite: parseInt(quantite),        
         image,
         Id_Utilisateur,
       },
@@ -536,7 +570,7 @@ app.delete("/equipements/:id", async (req, res) => {
 // CRUD COURS
 
 // Récupérer tous les cours
-app.get("/cours", async (req, res) => {
+app.get("/all-cours", async (req, res) => {
   try {
     const cours = await prisma.cours.findMany();
     res.json(cours);
@@ -549,6 +583,8 @@ app.get("/cours", async (req, res) => {
 });
 
 // Créer un nouveau cours
+
+// TODO: authentificate and check for admin only
 app.post("/cours", async (req, res) => {
   const {
     nom,
@@ -848,6 +884,20 @@ app.post("/inscrire", async (req, res) => {
     return res.status(400).json({ error: "Données invalides" });
   }
 
+  // TODO: check that the cours-utilisateur doesn't exist in french
+
+  const s_inscrire = await prisma.s_inscrire.findUnique({
+    where: { 
+      Id_Cours_Id_Utilisateur:{
+        Id_Cours: parseInt(Id_Cours),
+        Id_Utilisateur: parseInt(Id_Utilisateur) },
+    }
+  });
+
+  if (s_inscrire){
+    return res.status(400).json({ error: "Vous etes déjà inscrit" });
+  }
+    
   try {
     console.log(req.body);
     const inscription = await prisma.s_inscrire.create({
@@ -868,6 +918,19 @@ app.post("/enregistre", async (req, res) => {
 
   if (!Id_Evenement || !Id_Utilisateur) {
     return res.status(400).json({ error: "Données invalides" });
+  }
+   // TODO: check that the evenement-utilisateur doesn't exist in french
+
+   const s_enregistrer = await prisma.s_enregistrer.findUnique({
+    where: { 
+      s_enregistrer_id:{
+        Id_Evenement: parseInt(Id_Evenement),
+        Id_Utilisateur: parseInt(Id_Utilisateur) },
+    }
+  });
+
+  if (s_enregistrer){
+    return res.status(400).json({ error: "Vous etes déjà inscrit" });
   }
 
   try {

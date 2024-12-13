@@ -10,7 +10,7 @@ export default {
    * @returns {Promise} Liste des équipements.
    */
   getEvenement() {
-    return api.get("/evenement");
+    return api.get("/all-evenement");
   },
 
   /**

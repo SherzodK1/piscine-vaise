@@ -94,13 +94,13 @@
           <v-card-text>
             <v-form ref="formEquipementtRef" v-model="valid">
               <v-text-field
-                v-model="emrpeint.duree"
+                v-model="empreint.duree"
                 label="Durée"
                 required
               ></v-text-field>
               <v-date-input
                 label="Date d'empreint"
-                v-model="emrpeint.dateEmpreint"
+                v-model="empreint.dateEmpreint"
               >
               </v-date-input>
             </v-form>
@@ -136,7 +136,7 @@ export default {
     return {
       user: [],
       equipement: [],
-      emrpeint: {
+      empreint: {
         Id_Equipement: null,
         Id_Utilisateur: null,
         duree: null,
@@ -173,18 +173,19 @@ export default {
 
     async reserver() {
       this.user = JSON.parse(localStorage.getItem("user"));
-      this.emrpeint.Id_Equipement = this.selectedEquipement.Id_Equipement;
-      this.emrpeint.Id_Utilisateur = this.user.Id_Utilisateur;
+      this.empreint.Id_Equipement = this.selectedEquipement.Id_Equipement;
+      this.empreint.Id_Utilisateur = this.user.Id_Utilisateur;
       this.dialogReserve = false;
-      console.log(this.selectedEquipement);
-      console.log(this.emrpeint.Id_Equipement);
-      console.log(this.emrpeint.Id_Utilisateur);
+      console.log("1",this.selectedEquipement);
+      console.log("2",this.empreint.Id_Equipement);
+      console.log("3",this.empreint.Id_Utilisateur);
       try {
-        await api.empreintEquipement(this.emrpeint);
+        await api.empreintEquipement(this.empreint);
         alert("Vous venez de louer 1 équipement !");
       } catch (err) {
         this.error = err.message;
       }
+      
     },
   },
   async created() {

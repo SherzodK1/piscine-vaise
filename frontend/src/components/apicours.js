@@ -12,7 +12,7 @@ export default {
    * @returns {Promise} Liste des équipements.
    */
   getCours() {
-    return api.get("/cours");
+    return api.get("/all-cours");
   },
 
   /**
